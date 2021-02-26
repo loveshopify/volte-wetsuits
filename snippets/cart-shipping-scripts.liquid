@@ -1,0 +1,13 @@
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js" data-no-instant></script>
+<script type="text/javascript" src="{{ 'shopify_common.js' | shopify_asset_url }}" data-no-instant></script>
+<script type="text/javascript" src="/services/javascripts/countries.js" data-no-instant></script>
+<script type="text/javascript" src="{{ 'jquery.cart.min.js' | asset_url }}" data-no-instant></script>
+
+<script>
+    Shopify.Cart.ShippingCalculator.show( {
+      submitButton: {{ 'cart.shipping_calculator.submit_button_label' | t | json }},
+      submitButtonDisabled: {{ 'cart.shipping_calculator.submit_button_label_disabled' | t | json }},
+      {% if customer and customer.default_address.country %}customerIsLoggedIn: true,{% endif %}
+      moneyFormat: {{ shop.money_with_currency_format | json }}
+    });
+</script>

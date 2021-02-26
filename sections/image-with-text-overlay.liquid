@@ -1,0 +1,196 @@
+{% comment %}
+** Image with text overlay - homepage partial **
+- Draggable section
+{% endcomment %}
+
+{% include 'include-image-with-text-overlay' %}
+
+
+<style>
+  
+  {% if section.settings.button1_text_color != blank %}
+  #banner-{{ id }} .action_button.first_button {
+    color: {{ section.settings.button1_text_color }};
+  }
+  {% endif %}
+  
+  
+  {% if section.settings.button1_text_color_hover != blank %}
+  #banner-{{ id }} .action_button.first_button:hover {
+    border-color: {{ section.settings.button1_text_color_hover }};
+  }
+  {% endif %}
+  
+  {% if section.settings.button2_text_color != blank %}
+  #banner-{{ id }} .action_button.second_button {
+    color: {{ section.settings.button2_text_color }};
+  }
+  {% endif %}
+  
+  
+  {% if section.settings.button2_text_color_hover != blank %}
+  #banner-{{ id }} .action_button.second_button:hover {
+    color: {{ section.settings.button2_text_color_hover }};
+  }
+  {% endif %}
+  
+</style>
+
+{% schema %}
+
+{
+  "name": "Image with text overlay",
+  "class": "image-with-text-overlay-section under-menu",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "wide_display",
+      "label": "Wide display",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image",
+      "info": "1800 x 1000px recommended"
+    },
+    {
+      "type": "richtext",
+      "id": "pretext",
+      "label": "Preheading"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "subtitle",
+      "label": "Text"
+    },
+    {
+      "type": "checkbox",
+      "id": "caption_background",
+      "label": "Display solid text background",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "caption_background_transparency",
+      "label": "Enable background transparency"
+    },
+    {
+      "type": "select",
+      "id": "text_position",
+      "label": "Text position",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "button1",
+      "label": "First button label"
+    },
+    {
+      "type": "url",
+      "id": "button1_link",
+      "label": "First button link"
+    },
+	{
+      "type": "color",
+      "id": "button1_text_color",
+      "label": "First button text color"
+    },
+	{
+      "type": "color",
+      "id": "button1_text_color_hover",
+      "label": "First button text color hover"
+    },
+    {
+      "type": "checkbox",
+      "id": "button1_highlight",
+      "label": "Highlight first button"
+    },
+    {
+      "type": "text",
+      "id": "button2",
+      "label": "Second button label"
+    },
+    {
+      "type": "url",
+      "id": "button2_link",
+      "label": "Second button link"
+    },
+	{
+      "type": "color",
+      "id": "button2_text_color",
+      "label": "Second button text color"
+    },
+	{
+      "type": "color",
+      "id": "button2_text_color_hover",
+      "label": "Second button text color hover"
+    },
+    {
+      "type": "checkbox",
+      "id": "button2_highlight",
+      "label": "Highlight second button"
+    },
+    {
+      "type": "text",
+      "id": "vertical_line_text",
+      "label": "Vertical Line Text"
+    },
+    {
+      "type": "color",
+      "id": "vertical_line_color",
+      "label": "Vertical Line Color"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image with text overlay",
+      "category": "Image",
+      "settings": {
+        "image": "",
+        "title": "Your Headline",
+        "text_position": "center",
+        "text_align": "center"
+      }
+    }
+  ]
+}
+
+{% endschema %}

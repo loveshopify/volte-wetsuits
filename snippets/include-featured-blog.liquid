@@ -1,0 +1,149 @@
+{% if type == 'block' %}
+  {% assign title = block.settings.title %}
+  {% assign blog_widget_select = block.settings.blog_widget_select %}
+  {% assign home_page_articles = block.settings.home_page_articles %}
+  {% assign blog_tags = block.settings.blog_tags %}
+  {% assign blog_author = block.settings.blog_author %}
+  {% assign blog_date = block.settings.blog_date %}
+  {% assign blog_comment_count = block.settings.blog_comment_count %}
+  {% assign read_more_link = block.settings.read_more_link %}
+{% else %}
+  {% assign title = section.settings.title %}
+  {% assign blog_widget_select = section.settings.blog_widget_select %}
+  {% assign home_page_articles = section.settings.home_page_articles %}
+  {% assign blog_tags = section.settings.blog_tags %}
+  {% assign blog_author = section.settings.blog_author %}
+  {% assign blog_date = section.settings.blog_date %}
+  {% assign blog_comment_count = section.settings.blog_comment_count %}
+  {% assign read_more_link = section.settings.read_more_link %}
+{% endif %}
+
+<div class="container">
+  <div class="section clearfix homepage_content">
+    {% if title != blank %}
+      <div class="sixteen columns">
+        <h2 class="title center blog">
+          <a href="{{ blogs[blog_widget_select].url }}">{{ title | escape }}</a>
+        </h2>
+        <div class="feature_divider"></div>
+      </div>
+    {% endif %}
+    {% if blog_widget_select != blank %}
+      {% for article in blogs[blog_widget_select].articles limit: home_page_articles %}
+        <div class="{% if home_page_articles == 2 %}eight columns{% elsif home_page_articles == 3 %}one-third column{% else %}four columns{% endif %} article medium-down--one-whole">
+          {% if article.image %}
+            <a href="{{ article.url }}">
+              <img  src="{{ article.image | img_url: '100x' }}"
+                    class="lazyload {{ settings.image_loading_style }}"
+                    alt="{% if article.image.alt != blank %}{{ article.image.alt }}{% else %}{{ article.title | escape }}{% endif %}"
+                    style="max-width: {{- article.image.width -}}px;"
+                    data-sizes="auto"
+                    data-src="{{ article.image | img_url: '2048x' }}"
+                    data-srcset=" {{ article.image | img_url: '200x' }} 200w,
+                                  {{ article.image | img_url: '400x' }} 400w,
+                                  {{ article.image | img_url: '600x' }} 600w,
+                                  {{ article.image | img_url: '800x' }} 800w,
+                                  {{ article.image | img_url: '1000x' }} 1000w,
+                                  {{ article.image | img_url: '1400x' }} 1400w,
+                                  {{ article.image | img_url: '2048x' }} 2048w"
+                    />
+            </a>
+          {% endif %}
+
+          <h3 class="sub_title">
+            <a href="{{ article.url }}">{{ article.title }}</a>
+          </h3>
+          <p class="blog_meta">
+            {% if blog_author %}
+              <span>{{ 'blogs.article.by_author' | t: author: article.author }}</span>
+            {% endif %}
+
+            {% if blog_date %}
+              <span>{{ article.published_at | date: format: "month_day_year" }}</span>
+            {% endif %}
+
+            {% if section.settings.read_time %}
+              {% include 'include-read-time' %}
+            {% endif %}
+
+            {% if blog_comment_count %}
+              {% if settings.disqus_enabled %}
+                <span>
+                  <a href="{{ article.url }}#disqus_thread" data-disqus-identifier="{{ article.id }}" class="disqus-comment-count">{{ 'blogs.counts.comments_with_count' | t: count: 0 }}</a>
+                </span>
+              {% elsif article.comments_enabled? and article.comments_count > 0 %}
+                <span>
+                  <a href="{{ article.url }}#comments">{{ 'blogs.counts.comments_with_count' | t: count: article.comments_count }}</a>
+                </span>
+              {% endif %}
+            {% endif %}
+          </p>
+
+          {% if blog_tags %}
+            <div class="blog_meta tags">
+              {% for tag in article.tags %}
+                <span><a href="{{ shop.url}}/blogs/{{ blogs[blog_widget_select].handle }}/tagged/{{ tag | handleize }}" title="{{ blogs[blog_widget_select].title | escape }} {{ 'blogs.general.tagged' | t }} {{ tag | escape }}">{{ tag }}</a></span>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          {% if article.excerpt != blank %}
+            <div class="blog_excerpt">{{ article.excerpt }}</div>
+          {% endif %}
+          {% if read_more_link %}
+            <a href="{{ article.url }}" {% if settings.read_more_style == 'button' %}class="action_button continue-button"{% endif %}>{{ 'blogs.general.continue_reading_html' | t }}</a>
+          {% endif %}
+        </div>
+      {% endfor %}
+    {% else %}
+      {% for i in (1..home_page_articles) %}
+        <div class="{% if home_page_articles == 2 %}eight columns{% elsif home_page_articles == 3 %}one-third column medium-down--one-whole{% else %}four columns medium-down--one-half{% endif %} article small-down--one-whole">
+          {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+
+          <h3 class="sub_title">
+            <a href="#">{{ 'homepage.onboarding.blogpost_title' | t }}</a>
+          </h3>
+          <p class="blog_meta">
+            {% if blog_author %}
+              <span>{{ 'homepage.onboarding.blog_author' | t: author: article.author }}</span>
+            {% endif %}
+
+            {% if blog_date %}
+              <span>{{ 'now' | date: format: "month_day_year" }}</span>
+            {% endif %}
+
+            {% if section.settings.read_time %}
+              {% include 'include-read-time' %}
+            {% endif %}
+
+            {% if blog_comment_count %}
+              {% if settings.disqus_enabled %}
+                <span>
+                  <a href="#" data-disqus-identifier="#" class="disqus-comment-count">{{ 'blogs.counts.comments_with_count' | t: count: 0 }}</a>
+                </span>
+              {% else %}
+                <span>
+                  <a href="#">{{ 'blogs.counts.comments_with_count' | t: count: 5 }}</a>
+                </span>
+              {% endif %}
+            {% endif %}
+          </p>
+
+          {% if blog_tags %}
+            <div class="blog_meta tags">
+              {% for tag in article.tags %}
+                <span><a href="{{ shop.url}}/blogs/{{ blogs[blog_widget_select].handle }}/tagged/{{ tag | handleize }}" title="{{ blogs[blog_widget_select].title | escape }} {{ 'blogs.general.tagged' | t }} {{ tag | escape }}">{{ tag }}</a></span>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <div class="excerpt">{{ 'homepage.onboarding.blog_excerpt' | t }}</div>
+
+          {% if read_more_link %}
+            <a href="{{ article.url }}" {% if settings.read_more_style == 'button' %}class="action_button continue-button"{% endif %}>{{ 'blogs.general.continue_reading_html' | t }}</a>
+          {% endif %}
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+</div>

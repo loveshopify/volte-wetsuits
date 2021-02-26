@@ -1,0 +1,136 @@
+{% comment %}
+** Sidebar page - custom view **
+- Page template
+- Uses blocks
+{% endcomment %}
+
+<a name="pagecontent" id="pagecontent"></a>
+
+{% comment %}Check to see if sidebar should be enabled{% endcomment %}
+{% if section.blocks.size > 0 %}
+  {% assign sidebar = true %}
+{% else %}
+  {% assign sidebar = false %}
+{% endif %}
+
+<div class="sixteen columns">
+  <div class="section clearfix">
+    <h1>{{ page.title }}</h1>
+    <div class="feature_divider"></div>
+  </div>
+</div>
+
+{% if sidebar %}
+  {% include 'sidebar' %}
+  <div class="twelve columns page">
+{% else %}
+  <div class="sixteen columns page">
+{% endif %}
+  <div class="section clearfix">
+    {{ page.content }}
+  </div>
+</div>
+
+{% schema %}
+
+{
+  "name": "Page | sidebar",
+  "class": "sidebar-template-section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Create sidebar by adding content blocks."
+    },
+    {
+      "type": "checkbox",
+      "id": "toggle",
+      "label": "Toggle sidebar content",
+      "default": false
+    }
+  ],
+  "blocks": [
+    {
+      "type": "filter_by_collection",
+      "name": "Collection list",
+      "limit": 1
+    },
+    {
+      "type": "menu",
+      "name": "Menu",
+      "settings": [
+        {
+          "type": "link_list",
+          "id": "custom_menu_linklist",
+          "label": "Menu"
+        }
+      ]
+    },
+    {
+      "type": "page",
+      "name": "Page",
+      "settings": [
+        {
+          "type": "page",
+          "id": "content_page",
+          "label": "Page"
+        }
+      ]
+    },
+    {
+      "type": "recently_viewed",
+      "name": "Recently viewed products",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "To test the recently viewed products, view your online store outside of the Editor and visit multiple product pages ([?](https:\/\/help.outofthesandbox.com\/hc\/en-us\/articles\/115008765228))"
+        },
+        {
+          "type": "text",
+          "id": "sidebar_rv_title",
+          "label": "Title",
+          "default": "Recently Viewed"
+        },
+        {
+          "type": "range",
+          "id": "sidebar_rv_per",
+          "label": "Products limit",
+          "min": 1,
+          "max": 4,
+          "step": 1,
+          "default": 3
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Text",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Heading"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Text area can be used for special announcements or general information.</p>"
+        }
+      ]
+    },
+    {
+      "type": "filter_by_type",
+      "name": "Type list",
+      "limit": 1
+    },
+    {
+      "type": "filter_by_vendor",
+      "name": "Vendor list",
+      "limit": 1
+    }
+  ]
+}
+
+{% endschema %}

@@ -1,0 +1,68 @@
+{% if type == 'block' %}
+  {% assign rv_title = block.settings.rv_title %}
+  {% assign rv_max_display = block.settings.rv_max_display%}
+  {% assign rv_products_style = block.settings.rv_products_style %}
+  {% assign limit = block.settings.rv_max_display %}
+  {% assign loop_limit = block.settings.rv_max_display %}
+  {% assign rv_per = block.settings.rv_per %}
+{% else %}
+  {% assign rv_title = section.settings.rv_title %}
+  {% assign rv_max_display = section.settings.rv_max_display%}
+  {% assign rv_products_style = section.settings.rv_products_style %}
+  {% assign limit = section.settings.rv_max_display %}
+  {% assign loop_limit = section.settings.rv_max_display %}
+  {% assign rv_per = section.settings.rv_per %}
+{% endif %}
+
+<div  class="js-recently-viewed hidden recently-viewed__section"
+      data-visible-products="{{ rv_max_display }}">
+  {% unless sidebar %}<div class="container bottom-fix">{% endunless %}
+    {% if rv_title != blank %}
+      <div class="related-products__title {% unless rv_products_style  == 'slider' %}sixteen columns{% endunless %}">
+        <h2 class="title center">{{ rv_title }}</h2>
+        <div class="feature_divider"></div>
+      </div>
+    {% endif %}
+  {% unless sidebar %}</div>{% endunless %}
+
+  {% assign loop_limit = loop_limit | minus: 1 %}
+
+  {% if rv_products_style == 'slider' %}
+
+    <div class="rv-main js-rv-slider slider-gallery products-slider products-length-{{ rv_per }}"
+          data-products-per-slide="{{ rv_per }}"
+          data-products-limit="{{ limit }}">
+      {% for rvProducts in (0..loop_limit) %}
+        <div class="gallery-cell thumbnail rv-box-element rv-box-{{ rvProducts }} rv-element">
+          <!--Products are dynamically inserted-->
+        </div>
+      {% endfor %}
+    </div>
+
+  {% else %}
+    {% assign products_per_row = rv_per %}
+
+    {% unless sidebar %}<div class="container related-products--grid">{% endunless %}
+      <div class="sixteen columns">
+        <div class="rv-main js-rv-grid clearfix product-list collection-matrix"
+          data-products-per-slide="{{ rv_per }}"
+          data-products-limit="{{ limit }}">
+          {% for rvProducts in (0..loop_limit) %}
+            <div class="thumbnail rv-box-element rv-box-{{ rvProducts }} rv-element
+            {% if products_per_row == 3 %}
+              one-third column {% cycle 'alpha', '', 'omega' %}
+            {% elsif products_per_row == 4 %}
+              four columns {% cycle 'alpha', '', '', 'omega' %}
+            {% elsif products_per_row == 5 %}
+              one-fifth column {% cycle 'alpha', '', '', '', 'omega' %}
+            {% endif %}
+            {% cycle 'even', 'odd' %}">
+              <!--Products are dynamically inserted-->
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% unless sidebar %}</div>{% endunless %}
+  {% endif %}
+</div>
+

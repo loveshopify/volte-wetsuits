@@ -1,0 +1,134 @@
+{% if type == 'block' %}
+  {% assign id = block.id %}
+  {% assign wide_display = block.settings.wide_display %}
+  {% assign image = block.settings.image %}
+  {% assign pretext = block.settings.pretext %}
+  {% assign title = block.settings.title %}
+  {% assign subtitle = block.settings.subtitle %}
+  {% assign caption_background = block.settings.caption_background %}
+  {% assign caption_background_transparency = block.settings.caption_background_transparency %}
+  {% assign text_position = block.settings.text_position %}
+  {% assign text_align = block.settings.text_align %}
+  {% assign button1 = block.settings.button1 %}
+  {% assign button1_link = block.settings.button1_link %}
+  {% assign button1_highlight = block.settings.button1_highlight %}
+  {% assign button2 = block.settings.button2 %}
+  {% assign button2_link = block.settings.button2_link %}
+  {% assign button2_highlight = block.settings.button2_highlight %}
+{% else %}
+  {% assign id = section.id %}
+  {% assign wide_display = section.settings.wide_display %}
+  {% assign image = section.settings.image %}
+  {% assign pretext = section.settings.pretext %}
+  {% assign title = section.settings.title %}
+  {% assign subtitle = section.settings.subtitle %}
+  {% assign caption_background = section.settings.caption_background %}
+  {% assign caption_background_transparency = section.settings.caption_background_transparency %}
+  {% assign text_position = section.settings.text_position %}
+  {% assign text_align = section.settings.text_align %}
+  {% assign button1 = section.settings.button1 %}
+  {% assign button1_link = section.settings.button1_link %}
+  {% assign button1_highlight = section.settings.button1_highlight %}
+  {% assign button2 = section.settings.button2 %}
+  {% assign button2_link = section.settings.button2_link %}
+  {% assign button2_highlight = section.settings.button2_highlight %}
+{% endif %}
+
+{% if wide_display == false %}
+<div class="container">
+  <div class="sixteen columns">
+{% endif %}
+
+{% assign default = '1400x' %}
+{% assign size1 = '480x' %}
+{% assign size2 = '765x' %}
+{% assign size3 = '900x' %}
+{% assign size4 = '1000x' %}
+{% assign size5 = '1100x' %}
+{% assign size6 = '1300x' %}
+{% assign size7 = '1500x' %}
+{% assign size8 = '1700x' %}
+{% assign size9 = '1900x' %}
+{% assign size10 = '2000x' %}
+
+<section id="banner-{{ id }}" class="banner full-width--{{ wide_display }}">
+  <span class="follow-our-insta">{{ section.settings.vertical_line_text }}</span>
+  <span class="abt-singke-focus">Single Focus</span>
+  {% if image != nil %}
+    <img  src="{{ image | img_url: '100x', format: 'pjpg' }}"
+          alt="{{ image.alt | escape }}"
+          class="lazyload {{ settings.image_loading_style }}"
+          sizes="100vw"
+          data-src="{{ image | img_url: default, format: 'pjpg' }}"
+          srcset="
+          {{ image | img_url: default, format: 'pjpg' }} {{default | replace: 'x', 'w'}},
+          {{ image | img_url: size1, format: 'pjpg' }} {{size1 | replace: 'x', 'w'}},
+          {{ image | img_url: size2, format: 'pjpg' }} {{size2 | replace: 'x', 'w'}},
+          {{ image | img_url: size3, format: 'pjpg' }} {{size3 | replace: 'x', 'w'}},
+          {{ image | img_url: size4, format: 'pjpg' }} {{size4 | replace: 'x', 'w'}},
+          {{ image | img_url: size5, format: 'pjpg' }} {{size5 | replace: 'x', 'w'}},
+          {{ image | img_url: size6, format: 'pjpg' }} {{size6 | replace: 'x', 'w'}},
+          {{ image | img_url: size7, format: 'pjpg' }} {{size7 | replace: 'x', 'w'}},
+          {{ image | img_url: size8, format: 'pjpg' }} {{size8 | replace: 'x', 'w'}},
+          {{ image | img_url: size9, format: 'pjpg' }} {{size9 | replace: 'x', 'w'}},
+          {{ image | img_url: size10, format: 'pjpg' }} {{size10 | replace: 'x', 'w'}}"
+
+           />
+  {% else %}
+    {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg placeholder-svg--banner' }}
+  {% endif %}
+  {% unless button1_link != blank and button2_link != blank %}
+    {% if button1_link != blank %}
+      <a href="{{ button1_link }}" class="banner-full-link">
+        {{ button1 }}
+      </a>
+    {% endif %}
+    {% if button2_link != blank %}
+      <a href="{{ button2_link }}" class="banner-full-link">
+        {{ button2 }}
+      </a>
+    {% endif %}
+  {% endunless %}
+  {% unless pretext == blank and title == blank and subtitle == blank and button1 == blank and button2 == blank %}
+    <div class="position-{{ text_position }} caption js-caption">
+      <div class="caption-content caption-background-{{ caption_background }} caption-transparency-{{ caption_background_transparency }} align-{{ text_align }}">
+        {% if pretext != blank %}
+          <div class="pretext">
+            {{ pretext }}
+          </div>
+        {% endif %}
+        {% if title != blank %}
+          <h1 class="headline">
+            {{ title }}
+          </h1>
+        {% endif %}
+        {% if subtitle != blank %}
+          <div class="subtitle">
+            {{ subtitle }}
+          </div>
+        {% endif %}
+        {% if button1 != blank %}
+          <a {% if button1_link != blank %}href="{{ button1_link }}"{% endif %} class="action_button first_button highlight-{{ button1_highlight }}">
+            {{ button1 }}
+          </a>
+        {% endif %}
+        {% if button2 != blank %}
+          <a {% if button2_link != blank %}href="{{ button2_link }}"{% endif %} class="action_button second_button highlight-{{ button2_highlight }}">
+            {{ button2 }}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  {% endunless %}
+</section>
+
+{% if wide_display == false %}
+  </div>
+</div>
+{% endif %}
+
+<style>
+  .follow-our-insta::after {
+    background-color: {{ section.settings.vertical_line_color }} !important;
+  }
+</style>

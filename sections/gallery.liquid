@@ -1,0 +1,197 @@
+{% comment %}
+** Gallery - homepage partial **
+- Draggable section
+- Uses blocks
+
+{% endcomment %}
+
+{% assign images_per_row = section.settings.grid-size %}
+<div  id="gallery_section-{{section.id}}" class="gallery-section {% if section.settings.full_width %}gallery-full{% else %}container{% endif %} gallery-{{ section.settings.gallery_type }}">
+
+ {% if section.settings.title != blank %}
+  <div class="container">
+      <h2 class="title center">{{ section.settings.title | escape }}</h2>
+      <div class="feature_divider"></div>
+  </div>
+  {% endif %}
+  <div class="gallery-break"></div>
+  {% if section.blocks.size > 0 %}
+
+    {% if section.settings.gallery_type == 'masonry' %}
+      <div class="masonry {% if section.settings.full_width %}adjust-columns{% endif %} {% if images_per_row == 2 %}two-per-row{% elsif images_per_row == 3 %}three-per-row{% elsif images_per_row == 4 %}four-per-row{% else %}five-per-row{% endif %}">
+    {% endif %}
+
+    {% for block in section.blocks %}
+      {% if block.settings.image != blank %}
+
+        <div class="gallery-image-wrapper {% unless section.settings.gallery_type == 'horizontal' or section.settings.gallery_type == 'masonry'  %}{% if images_per_row == 2 %}two-per-row{% elsif images_per_row == 3 %}three-per-row{% elsif images_per_row == 4 %}four-per-row{% else %}five-per-row{% endif %}{% endunless %} {% unless section.settings.full_width %}add-padding{% endunless %}" {{ block.shopify_attributes }}>
+          {% if section.settings.enable_lightbox %}
+          <div class="gallery-cell">
+            <a href="{{ block.settings.image |  img_url: '2000x' }}" class="lightbox" rel="gallery">
+          {% endif %}
+            <i class="image-{{ block.id }}"></i>
+            <img  src="{{ block.settings.image | img_url: '100x' }}"
+                  alt="{% if block.settings.image.alt != blank %}{{ block.settings.image.alt }}{% else %}{{ block.settings.title | escape }}{% endif %}"
+                  class="lazyload {{ settings.image_loading_style }}"
+                  data-sizes="auto"
+                  data-src="{{ block.settings.image |  img_url: '1000x', crop: 'center'}}"
+                  data-srcset=" {{ block.settings.image | img_url: '240x', crop: 'center' }} 240w,
+                                {{ block.settings.image | img_url: '480x', crop: 'center' }} 480w,
+                                {{ block.settings.image | img_url: '600x', crop: 'center' }} 600w,
+                                {{ block.settings.image | img_url: '800x', crop: 'center' }} 800w,
+                                {{ block.settings.image | img_url: '900x', crop: 'center' }} 900w,
+                                {{ block.settings.image | img_url: '1000x', crop: 'center' }} 1000w"
+                   />
+            {% if section.settings.enable_lightbox %}
+              <div class="overlay">
+                <div class="display-table">
+                  <div class="display-table-cell">
+                    <span class="icon-search"></span>
+                  </div>
+                </div>
+              </div>
+              </a>
+            </div>
+            {% endif %}
+        </div>
+
+      {% else %}
+
+        {% if section.settings.gallery_type == 'horizontal' and section.settings.full_width %}
+          {% capture placeholder_sizing %}{% cycle 'style="width:30%"', 'style="width:20%"', 'style="width:20%"', 'style="width:30%"', 'style="width:20%"', 'style="width:30%"', 'style="width:30%"', 'style="width:20%"' %}{% endcapture %}
+        {% elsif section.settings.gallery_type == 'horizontal' %}
+          {% capture placeholder_sizing %}{% cycle 'style="width:calc(30% - 10px);"', 'style="width:calc(20% - 10px);"', 'style="width:calc(20% - 10px);"', 'style="width:calc(30% - 10px);"', 'style="width:calc(20% - 10px);"', 'style="width:calc(30% - 10px);"', 'style="width:calc(30% - 10px);"', 'style="width:calc(20% - 10px);"' %}{% endcapture %}
+        {% elsif section.settings.gallery_type == 'masonry' %}
+          {% capture placeholder_sizing %}{% cycle 'style="height:150px"', 'style="height:200px"', 'style="height:200px"', 'style="height:150px"', 'style="height:200px"', 'style="height:150px"', 'style="height:150px"', 'style="height:200px"' %}{% endcapture %}
+        {% endif %}
+
+        <div class="gallery-empty-wrapper {% unless section.settings.gallery_type == 'horizontal' %}{% if images_per_row == 2 %}two-per-row{% elsif images_per_row == 3 %}three-per-row{% elsif images_per_row == 4 %}four-per-row{% else %}five-per-row{% endif %}{% endunless %} {% unless section.settings.full_width %}add-padding{% endunless %}" {{ block.shopify_attributes }}
+        {{ placeholder_sizing }}>
+          {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+        </div>
+
+      {% endif %}
+
+      {% unless section.settings.gallery_type == 'horizontal' or section.settings.gallery_type == 'masonry' %}
+        {% if images_per_row == 2 %}
+          {% cycle '', '<br class="clear" />' %}
+        {% elsif images_per_row == 3 %}
+          {% cycle '', '', '<br class="clear" />' %}
+        {% elsif images_per_row == 4 %}
+          {% cycle '', '', '', '<br class="clear" />' %}
+        {% elsif images_per_row == 5 %}
+          {% cycle '', '', '', '', '<br class="clear" />' %}
+        {% endif %}
+      {% endunless %}
+    {% endfor %}
+
+    {% if section.settings.gallery_type == 'masonry' %}
+      </div>
+    {% endif %}
+
+  {% endif %}
+
+</div>
+
+{% schema %}
+  {
+    "name": "Gallery",
+    "class": "image-gallery-section",
+    "max_blocks": 24,
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "Gallery"
+      },
+      {
+        "type": "select",
+        "id": "gallery_type",
+        "label": "Gallery style",
+        "options": [
+          {
+            "value": "horizontal",
+            "label": "Horizontal masonry"
+          },
+          {
+            "value": "masonry",
+            "label": "Vertical masonry"
+          },
+          {
+            "value": "classic",
+            "label": "Classic"
+          }
+        ],
+        "default": "classic"
+      },
+      {
+        "type": "checkbox",
+        "id": "full_width",
+        "label": "Wide display"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_lightbox",
+        "label": "Enable lightbox",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "grid-size",
+        "label": "Images per row",
+        "min": 2,
+        "max": 5,
+        "step": 1,
+        "default": 4,
+        "info": "Vertical masonry and classic only"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "image",
+        "name": "Image",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image",
+            "info": "800 x 800px recommended"
+          }
+        ]
+      }
+    ],
+     "presets": [
+      {
+        "name": "Gallery",
+        "category": "Image",
+        "blocks": [
+          {
+            "type": "image"
+          },
+          {
+            "type": "image"
+          },
+          {
+            "type": "image"
+          },
+          {
+            "type": "image"
+          },
+          {
+            "type": "image"
+          },
+          {
+            "type": "image"
+          },
+          {
+            "type": "image"
+          },
+          {
+            "type": "image"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

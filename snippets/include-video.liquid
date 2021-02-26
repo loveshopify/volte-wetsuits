@@ -1,0 +1,202 @@
+{% if type == 'block' %}
+  {% assign id = block.id %}
+  {% assign wide_display = block.settings.wide_display %}
+  {% assign source = block.settings.source %}
+  {% assign aspect_ratio = block.settings.aspect_ratio %}
+  {% assign autoplay = block.settings.autoplay %}
+  {% assign autoloop = block.settings.autoloop %}
+  {% assign video_dark_overlay = block.settings.video_dark_overlay %}
+  {% assign video = block.settings.video %}
+  {% assign mp4 = block.settings.mp4 %}
+  {% assign ogv = block.settings.ogv %}
+  {% assign image = block.settings.image %}
+  {% assign display_text_over_video = block.settings.display_text_over_video %}
+  {% assign pretext = block.settings.pretext %}
+  {% assign title = block.settings.title %}
+  {% assign subtitle = block.settings.subtitle %}
+  {% assign text_position = block.settings.text_position %}
+  {% assign text_align = block.settings.text_align %}
+  {% assign caption_background = block.settings.caption_background %}
+  {% assign caption_background_transparency = block.settings.caption_background_transparency %}
+  {% assign button1_label = block.settings.button1_label %}
+  {% assign button1_link = block.settings.button1_link %}
+  {% assign button1_highlight = block.settings.button1_highlight %}
+  {% assign button2_label = block.settings.button2_label %}
+  {% assign button2_link = block.settings.button2_link %}
+  {% assign button2_highlight = block.settings.button2_highlight %}
+{% else %}
+  {% assign id = section.id %}
+  {% assign wide_display = section.settings.wide_display %}
+  {% assign source = section.settings.source %}
+  {% assign aspect_ratio = section.settings.aspect_ratio %}
+  {% assign autoplay = section.settings.autoplay %}
+  {% assign autoloop = section.settings.autoloop %}
+  {% assign video_dark_overlay = section.settings.video_dark_overlay %}
+  {% assign video = section.settings.video %}
+  {% assign mp4 = section.settings.mp4 %}
+  {% assign ogv = section.settings.ogv %}
+  {% assign image = section.settings.image %}
+  {% assign display_text_over_video = section.settings.display_text_over_video %}
+  {% assign pretext = section.settings.pretext %}
+  {% assign title = section.settings.title %}
+  {% assign subtitle = section.settings.subtitle %}
+  {% assign text_position = section.settings.text_position %}
+  {% assign text_align = section.settings.text_align %}
+  {% assign caption_background = section.settings.caption_background %}
+  {% assign caption_background_transparency = section.settings.caption_background_transparency %}
+  {% assign button1_label = section.settings.button1_label %}
+  {% assign button1_link = section.settings.button1_link %}
+  {% assign button1_highlight = section.settings.button1_highlight %}
+  {% assign button2_label = section.settings.button2_label %}
+  {% assign button2_link = section.settings.button2_link %}
+  {% assign button2_highlight = section.settings.button2_highlight %}
+{% endif %}
+
+{% if wide_display == false %}
+<div class="container">
+  <div class="sixteen columns">
+{% endif %}
+
+{% assign default = '1400x' %}
+{% assign size1 = '480x' %}
+{% assign size2 = '765x' %}
+{% assign size3 = '900x' %}
+{% assign size4 = '1000x' %}
+{% assign size5 = '1100x' %}
+{% assign size6 = '1300x' %}
+{% assign size7 = '1500x' %}
+{% assign size8 = '1700x' %}
+{% assign size9 = '1900x' %}
+{% assign size10 = '2000x' %}
+
+{% if type == 'block' %}
+  <div class="video-section">
+{% endif %}
+
+<section class="homepage-video
+                darken-video-{{ video_dark_overlay }}
+                placeholder-image--{% if image %}true{% else %}false{% endif %}
+                full-width--{{ wide_display }}
+                auto-play--{{ autoplay }}"
+      data-video-id="video-{{id}}"
+      data-autoplay="{{ autoplay }}"
+      data-autoloop="{{ autoloop }}"
+      data-display-text-over-video="{{ display_text_over_video }}"
+      data-poster-image="{% if image %}{{ image | img_url: '1500x' }}{% else %}false{% endif %}"
+      data-video-src="{{ video.id }}"
+      data-aspect-ratio="{{ aspect_ratio }}"
+      data-provider="{% if video.type != blank %}{{ video.type }}{% else %}{% if mp4 != blank %}html5{% else %}empty{% endif %}{% endif %}"
+      data-video-mp4="{{ mp4 }}"
+      data-video-ogv="{{ ogv }}"
+>
+  <div class="homepage-video--media">
+    {% if image %}
+      <img  src="{{ image | img_url: '100x', format: 'pjpg' }}"
+            alt="{% if image.alt != blank %}{{ image.alt | escape }}{% else %}{{ title | escape }}{% endif %}"
+            class="lazyload {{ settings.image_loading_style }} homepage-video__image"
+            data-play-video
+            sizes="100vw"
+            data-src="{{ image | img_url: default, format: 'pjpg' }}"
+            srcset="
+            {{ image | img_url: default, format: 'pjpg' }} {{default | replace: 'x', 'w'}},
+            {{ image | img_url: size1, format: 'pjpg' }} {{size1 | replace: 'x', 'w'}},
+            {{ image | img_url: size2, format: 'pjpg' }} {{size2 | replace: 'x', 'w'}},
+            {{ image | img_url: size3, format: 'pjpg' }} {{size3 | replace: 'x', 'w'}},
+            {{ image | img_url: size4, format: 'pjpg' }} {{size4 | replace: 'x', 'w'}},
+            {{ image | img_url: size5, format: 'pjpg' }} {{size5 | replace: 'x', 'w'}},
+            {{ image | img_url: size6, format: 'pjpg' }} {{size6 | replace: 'x', 'w'}},
+            {{ image | img_url: size7, format: 'pjpg' }} {{size7 | replace: 'x', 'w'}},
+            {{ image | img_url: size8, format: 'pjpg' }} {{size8 | replace: 'x', 'w'}},
+            {{ image | img_url: size9, format: 'pjpg' }} {{size9 | replace: 'x', 'w'}},
+            {{ image | img_url: size10, format: 'pjpg' }} {{size10 | replace: 'x', 'w'}}"
+             />
+    {% else %}
+      <div class="homepage-video__placeholder" data-play-video>
+        {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg placeholder-svg--video' }}
+      </div>
+    {% endif %}
+    {% unless pretext == blank and title == blank and subtitle == blank and button1_label == blank and button2_label == blank %}
+      <div class="position-{{ text_position }} caption js-caption text-on-video text-on-video--{{ display_text_over_video }}">
+        <div class="caption-content
+                    caption-background-{{caption_background}}
+                    caption-transparency-{{ caption_background_transparency }}
+                    align-{{text_align}}">
+          {% if pretext != blank %}
+            <div class="pretext">
+              {{ pretext }}
+            </div>
+          {% endif %}
+          {% if title != blank %}
+            <h1 class="headline">
+              {{ title }}
+            </h1>
+          {% endif %}
+          {% if subtitle != blank %}
+            <div class="subtitle">
+              {{ subtitle }}
+            </div>
+          {% endif %}
+          {% if button1_label != blank %}
+            <a {% if button1_link != blank %}href="{{ button1_link }}"{% else %}data-play-video-button{% endif %} class="action_button first_button highlight-{{ button1_highlight }} {% if button1_link == blank %}video__play-button{% endif %}">
+              {{ button1_label }}
+            </a>
+          {% endif %}
+          {% if button2_label != blank %}
+            <a {% if button2_link != blank %}href="{{ button2_link }}"{% else %}data-play-video{% endif %} class="action_button second_button highlight-{{ button2_highlight }} {% if button2_link == blank %}video__play-button{% endif %}">
+              {{ button2_label }}
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    {% endunless %}
+  </div>
+</section>
+
+{% if type == 'block' %}
+  </div>
+{% endif %}
+
+{% unless pretext == blank and title == blank and subtitle == blank and button1_label == blank and button2_label == blank %}
+  <section class="position-{{ text_position }} caption js-caption text-on-video outside-homepage-video">
+    <div class="caption-content align-{{ text_align }}">
+      {% if pretext != blank %}
+        <div class="pretext">
+          {{ pretext }}
+        </div>
+      {% endif %}
+      {% if title != blank %}
+        <h1 class="headline">
+          {{ title }}
+        </h1>
+      {% endif %}
+      {% if subtitle != blank %}
+        <div class="subtitle">
+          {{ subtitle }}
+        </div>
+      {% endif %}
+      {% if button1_label != blank and button1_link != blank %}
+        <a href="{{ button1_link }}" class="action_button first_button highlight-{{ button1_highlight }}">
+          {{ button1_label }}
+        </a>
+      {% endif %}
+      {% if button2_label != blank and button2_link != blank %}
+        <a href="{{ button2_link }}" class="action_button first_button highlight-{{ button2_highlight }}">
+          {{ button2_label }}
+        </a>
+      {% endif %}
+    </div>
+  </section>
+{% endunless %}
+
+<style>
+  {% if autoplay %}
+    .homepage-video__placeholder {
+      visibility: hidden;
+    }
+  {% endif %}
+</style>
+
+{% if wide_display == false %}
+  </div>
+</div>
+{% endif %}

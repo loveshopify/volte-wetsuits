@@ -1,0 +1,208 @@
+<div class="container">
+  {% if section.settings.title != blank %}
+    <div class="sixteen columns">
+      <h2 class="title center">{{ section.settings.title | escape }}</h2>
+      <div class="feature_divider"></div>
+    </div>
+  {% endif %}
+
+  {% for block in section.blocks %}
+  {% if section.blocks.size == 1 %}
+    {%- assign column_width = 'sixteen columns' -%}
+    {% elsif section.blocks.size == 3 %}
+      {%- assign column_width = 'one-third column' -%}
+    {% elsif section.blocks.size == 4 %}
+      {%- assign column_width = 'four columns medium-down--one-half' -%}
+    {% elsif section.blocks.size == 5 %}
+      {%- assign column_width = 'one-fifth column medium-down--one-half' -%}
+    {% else %}
+      {%- assign column_width = 'eight columns medium-down--one-half' -%}
+    {% endif %}
+    <div class="{{ column_width }} text-column" {{ block.shopify_attributes }}>
+      <div class="border-style--{{ block.settings.border_style }} text-align--{{ block.settings.align_text }}">
+        {% if block.settings.enable_image %}
+          {% if block.settings.image != blank %}
+            <p>
+              <img  src="{{ block.settings.image.src | img_url: '100x' }}"
+                    class="lazyload {{ settings.image_loading_style }}"
+                    alt="{{ block.settings.image.alt }}"
+                    data-sizes="auto"
+                    data-src="{{ block.settings.image | img_url: '800x' }}"
+                    data-srcset=" {{ block.settings.image | img_url: '2048x' }} 2048w,
+                                  {{ block.settings.image | img_url: '1200x' }} 1200w,
+                                  {{ block.settings.image | img_url: '1000x' }} 1000w,
+                                  {{ block.settings.image | img_url: '800x' }} 800w,
+                                  {{ block.settings.image | img_url: '600x' }} 600w,
+                                  {{ block.settings.image | img_url: '400x' }} 400w"
+                     />
+             </p>
+            <noscript>
+              <p>
+                {{ block.settings.image | img_url: '480x480', scale: 2 | img_tag: block.settings.image.alt }}
+              </p>
+            </noscript>
+          {% else %}
+            <p>
+              {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+            </p>
+          {% endif %}
+        {% endif %}
+        {% if block.settings.title != blank %}
+          <h3 class="{{ block.settings.heading_size }}">{{ block.settings.title | escape }}</h3>
+        {% endif %}
+        {% if block.settings.text != blank %}
+          <div class="rte-setting">{{ block.settings.text }}</div>
+        {% endif %}
+        {% if block.settings.button_label != blank and block.settings.button_link != blank %}
+          <a href="{{ block.settings.button_link }}" class="action_button continue-button">
+            {{ block.settings.button_label | escape }}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+<style>
+  
+  {% if section.settings.background_color != blank %}
+  
+  #shopify-section-{{ section.id }} {
+    background-color: {{ section.settings.background_color }};
+  }
+  
+  {% endif %}
+  
+</style>
+
+{% schema %}
+  {
+    "name": "Text columns with images",
+    "class": "text-columns-with-images-section",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "Text columns with images"
+      },
+	  {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "text_block",
+        "name": "Column",
+        "limit": 5,
+        "settings": [
+          {
+            "type": "checkbox",
+            "id": "enable_image",
+            "label": "Show image",
+            "default": true
+          },
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Heading",
+            "default": "Add a title or tagline"
+          },
+          {
+            "type": "select",
+            "id": "heading_size",
+            "label": "Heading size",
+            "options": [
+              {
+                "value": "regular_text",
+                "label": "Regular"
+              },
+              {
+                "value": "large_text",
+                "label": "Large"
+              }
+            ],
+            "default": "regular_text"
+          },
+          {
+            "type": "richtext",
+            "id": "text",
+            "label": "Text",
+            "default": "<p>Share blog posts, products, or promotions with your customers. Use this text to describe products, share details on availability and style, or as a space to display recent reviews or FAQs.</p>"
+          },
+          {
+            "type": "select",
+            "id": "align_text",
+            "label": "Text alignment",
+            "default": "left",
+            "options": [
+              {
+                "value": "left",
+                "label": "Left"
+              },
+              {
+                "value": "center",
+                "label": "Centered"
+              },
+              {
+                "value": "right",
+                "label": "Right"
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "id": "button_label",
+            "label": "Button label"
+          },
+          {
+            "type": "url",
+            "id": "button_link",
+            "label": "Button link"
+          },
+          {
+            "type": "select",
+            "id": "border_style",
+            "label": "Border style",
+            "options": [
+              {
+                "value": "none",
+                "label": "None"
+              },
+              {
+                "value": "box",
+                "label": "Box"
+              },
+              {
+                "value": "quote",
+                "label": "Quote"
+              }
+            ],
+            "default": "none"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Text columns with images",
+        "category": "Text",
+        "blocks": [
+          {
+            "type": "text_block"
+          },
+          {
+            "type": "text_block"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

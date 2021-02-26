@@ -1,0 +1,41 @@
+{% comment %}
+** Product snippet - only used as AJAX reference for recently viewed **
+{% endcomment %}
+
+<div class="js-recently-viewed-product">
+  <div class="product-wrap">
+      <div class="relative product_image swap-{{ settings.collection_secondary_image }}">
+        <a href="{{ product.url | within: collection }}" itemprop="url">
+          <div class="image__container">
+            <img  src="{{ product.featured_image | product_img_url: '100x' }}"
+                  alt="{{ alt_text | escape }}"
+                  class="lazyload {{ settings.image_loading_style }}"
+                  data-sizes="100vw"
+                  data-src="{{ product.featured_image | product_img_url: '900x' }}"
+                  data-srcset=" {{ product.featured_image | product_img_url: '300x' }} 300w,
+                                {{ product.featured_image | product_img_url: '400x' }} 400w,
+                                {{ product.featured_image | product_img_url: '500x' }} 500w,
+                                {{ product.featured_image | product_img_url: '600x' }} 600w,
+                                {{ product.featured_image | product_img_url: '700x' }} 700w,
+                                {{ product.featured_image | product_img_url: '800x' }} 800w,
+                                {{ product.featured_image | product_img_url: '900x' }} 900w"
+                />
+              </div>
+            {% if settings.collection_secondary_image != blank %}
+              <div class="image__container" style="max-width: {% if product.images[1] != blank %}{{- product.images[1].width -}}px{% else %}{{- product.featured_image.width -}}px{% endif %}; ">
+                <img src="{% if product.images[1] != blank %}{{ product.images[1] | product_img_url: '900x' }}{% else %}{{ product.featured_image | product_img_url: '900x' }}{% endif %}"
+                class="secondary lazyload"
+                alt="{{ alt_text | escape }}"
+                />
+              </div>
+            {% endif %}
+          </a>
+        {% include "product-details" %}
+      </div>
+      <a class="product-info__caption {% if settings.thumbnail_hover_enabled %}hidden{% endif %}" href="{{ product.url | within: collection }}" itemprop="url">
+        {% include "product-info" %}
+      </a>
+      </div>
+    {% include 'collection-swatch' %}
+  </div>
+</div>

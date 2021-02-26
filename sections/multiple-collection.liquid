@@ -1,0 +1,97 @@
+{% comment %}
+   ** Single featured collection - homepage partial **
+   - Draggable section
+{% endcomment %}
+
+{% include 'include-featured-collection' %}
+
+<style>
+
+   {% if section.settings.background_color != blank %}
+
+   #shopify-section-{{ section.id }} {
+      background-color: {{ section.settings.background_color }};
+   }
+
+   {% endif %}
+
+</style>
+
+{% schema %}
+   {
+      "name": "Multiple collection",
+      "class": "featured-collection-section",
+      "settings": [
+         {
+            "type": "text",
+            "id": "title",
+            "label": "Heading",
+            "default": "Featured collection"
+         },
+         {
+            "type": "color",
+            "id": "background_color",
+            "label": "Background Color"
+         }
+      ],
+      "blocks": [
+         {
+            "type": "collection",
+            "name": "Collection",
+            "settings": [
+               {
+                  "type": "collection",
+                  "id": "collection",
+                  "label": "Collection"
+               },
+               {
+                  "type": "radio",
+                  "id": "collection_style",
+                  "label": "Collection layout",
+                  "default": "grid",
+                  "options": [
+                     {
+                        "value": "slider",
+                        "label": "Slider"
+                     },
+                     {
+                        "value": "grid",
+                        "label": "Grid"
+                     }
+                  ]
+               },
+               {
+                  "type": "checkbox",
+                  "id": "collection_description",
+                  "label": "Show description",
+                  "default": true
+               },
+               {
+                  "type": "range",
+                  "id": "products_per",
+                  "label": "Products per row",
+                  "min": 2,
+                  "max": 7,
+                  "step": 1,
+                  "default": 3
+               },
+               {
+                  "type": "range",
+                  "id": "products_limit",
+                  "label": "Limit products",
+                  "min": 2,
+                  "max": 50,
+                  "step": 1,
+                  "default": 9
+               }
+            ]
+         }
+      ],
+      "presets": [
+         {
+            "name": "Multiple collection",
+            "category": "Collection"
+         }
+      ]
+   }
+{% endschema %}

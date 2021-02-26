@@ -1,0 +1,83 @@
+<div class="remodal quick-shop js-quick-shop" data-remodal-id="quick-shop" data-remodal-options="hashTracking: false">
+  <a data-remodal-action="close" class="remodal-close"></a>
+  <div class="container section">
+    <div class="eight columns gallery-wrap hidden-element js-gallery-wrap
+                gallery-arrows--{{ settings.quick_shop_gallery_arrows }}
+                {% if settings.quick_shop_product_thumbs %}{{settings.quick_shop_thumbnail_position}}{% endif %}
+                {% if settings.quick_shop_product_images_position == 'right' %}align-gallery-right{% endif %} slideshow_animation--{{ settings.quick_shop_slideshow_animation }}">
+      <div  class="gallery product_gallery js-gallery-modal"
+            data-zoom="{{ settings.quick_shop_zoom }}"
+      >
+      </div>
+      {% if settings.quick_shop_product_thumbs %}
+        <div class="gallery product_gallery_nav js-gallery-carousel">
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="six columns text-modal-wrap hidden-element">
+
+    <!--Product banners inserted with JS - populateProductInfo() -->
+    <div class="sale_banner_product js-sale-banner"></div>
+    <div class="new_banner_product js-new-banner"></div>
+    <div class="new_banner_product js-pre-order-banner"></div>
+
+      {% if settings.quick_shop_display_vendor %}
+        <p class="vendor">
+          <span class="vendor js-product-vendor"></span>
+        </p>
+      {% endif %}
+      <h3 class="js-product-title"></h3>
+      <div class="feature_divider"></div>
+
+      <p class="modal_price">
+        <span class="sold_out js-sold-out"></span>
+        <span class="current_price js-current-price"><span class="money"></span></span>
+        <span class="was_price js-was-price"><span class="money"></span></span>
+        {% if settings.quick_shop_display_savings %}
+          <span class="sale savings js-savings"></span>
+        {% endif %}
+      </p>
+      <div class="currencies_wrapper">
+        <div class="currencies_anchor" data-default-shop-currency="{{ shop.currency }}">
+          {% capture codes %},USD,EUR,GBP,CAD,ARS,AUD,ILS,BBD,BDT,BSD,BHD,BRL,BOB,BND,BGN,MMK,KYD,CLP,CNY,COP,CRC,HRK,CZK,DKK,DOP,XCD,EGP,XPF,FJD,GHS,GTQ,GYD,GEL,HKD,HUF,ISK,INR,IDR,NIS,JMD,JPY,JOD,KZT,KES,KWD,LVL,LTL,MXN,MYR,MUR,MDL,MAD,MNT,MZN,ANG,NZD,NGN,NOK,OMR,PKR,PYG,PEN,PHP,PLN,QAR,RON,RUB,SAR,RSD,SCR,SGD,SYP,ZAR,KRW,LKR,SEK,CHF,TWD,THB,TZS,TTD,TRY,TND,UAH,AED,UYU,VEB,VND,ZMK,{% endcapture %}
+          {% assign supported_codes = settings.supported_currencies | split: ' ' %}
+          <span data-currency="{{ shop.currency }}" class="active">{{ shop.currency }}</span>
+          {% for code in supported_codes %}
+            {% if code != shop.currency and codes contains code %}
+            <span data-currency="{{ code }}">{{ code }}</span>
+            {% endif %}
+          {% endfor %}
+        </div>
+    </div>
+      <span class="js-notify-form"></span>
+
+      {% if settings.quick_shop_product_description_position == "top" %}
+        {% if settings.quick_shop_full_description %}
+          <span class="js-full-description clearfix"></span>
+          <span class="js-product-details"></span>
+        {% else %}
+          <p>
+            <span class="js-regular-description"></span>
+            <span class="js-product-details"></span>
+          </p>
+        {% endif %}
+      {% endif %}
+
+      <span class="js-product-form"></span>
+
+      {% if settings.quick_shop_product_description_position == "bottom" %}
+        {% if settings.quick_shop_full_description %}
+          <span class="js-full-description"></span>
+          <span class="js-product-details"></span>
+
+        {% else %}
+          <p>
+            <span class="js-regular-description"></span>
+            <span class="js-product-details"></span>
+          </p>
+        {% endif %}
+      {% endif %}
+    </div>
+  </div>
+</div>

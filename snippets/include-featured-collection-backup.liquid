@@ -1,0 +1,150 @@
+{% if type == 'block' %}
+  {% assign title = block.settings.title %}
+  {% assign settingCollection = block.settings.collection %}
+  {% assign collection_style = block.settings.collection_style %}
+  {% assign collection_description = block.settings.collection_description %}
+  {% assign products_per = block.settings.products_per %}
+  {% assign products_limit = block.settings.products_limit %}
+{% else %}
+  {% assign title = section.settings.title %}
+  {% assign settingCollection = section.settings.collection %}
+  {% assign collection_style = section.settings.collection_style %}
+  {% assign collection_description = section.settings.collection_description %}
+  {% assign products_per = section.settings.products_per %}
+  {% assign products_limit = section.settings.products_limit %}
+{% endif %}
+
+{% if settingCollection == blank %}
+  {%- assign section_onboarding = true -%}
+  {% comment %}assign product length to be selected limit for onboarding{% endcomment %}
+  {% assign products_length = products_limit | plus: 0 %}
+{% else %}
+  {%- assign section_onboarding = false -%}
+{% endif %}
+
+<div class="container featured_products product-{{ collection_style }}">
+  <div class="sixteen columns center homepage_content">
+    {% if title != blank %}
+      <a href="{{ collections[settingCollection].url }}"><h2 class="title">{{ title }}</h2></a>
+      <div class="feature_divider"></div>
+    {% endif %}
+    {% if collection_description and collections[settingCollection].description != blank %}
+      <div class="section clearfix">
+        {{ collections[settingCollection].description }}
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% assign limit = products_limit %}
+
+{% if collection_style == 'slider' %}
+  {% assign col = settingCollection %}
+  {% assign products = collections[settingCollection].products %}
+  {% assign per_slide = products_per %}
+
+  <div class="container js-product-slider homepage-product-slider full-width--true {% if per_slide == 2 or per_slide == 4 or per_slide == 6 %}even-num-slides{% endif %}">
+    {% if section_onboarding == false %}
+      {% if col and collections[col].all_products_count > 0 %}
+        {% include 'product-slider', per_slide: products_per, featured_collection: col  %}
+      {% endif %}
+    {% else %}
+      <div class="slider-gallery products-slider products-length-{{ products_length }}"
+            data-products-per-slide="{{ per_slide }}"
+            data-products-limit="{{ limit }}"
+            data-products-available="{{ products_length }}">
+        {% for i in (1..limit) %}
+          {% assign per_slide_num = products_per | plus: 0 %}
+          <div class="gallery-cell thumbnail
+          {% if products_length > per_slide_num %}visible-{{ per_slide }}{% else %}visible-{{ products_length }}{% endif %}
+          ">
+            <div class="product-wrap">
+              <div class="relative product_image">
+                <a href="#" itemprop="url">
+                  <object class="placeholder-image">
+                    {% capture num %}{% cycle "1", "2", "3", "4", "5", "6" %}{% endcapture %}
+                    {{ 'product-' | append: num | placeholder_svg_tag: 'placeholder-svg placeholder-svg--product' }}
+                  </object>
+                </a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+{% else %}
+  {% if section_onboarding == false %}
+    {% assign limit = products_limit %}
+    {% assign collection = collections[settingCollection] %}
+    {% assign products = collections[settingCollection].products %}
+    {% assign products_per_row = products_per %}
+    <div class="container">
+      <div class="sixteen columns">
+        {% include 'product-loop' %}
+      </div>
+    </div>
+  {% else %}
+    {% assign products_per_row = products_per %}
+    <div class="container equal-columns--outside-trim">
+      <div class="sixteen columns">
+        {% capture new_row %}
+            <br class="clear product_clear" />
+        {% endcapture %}
+
+        <div itemtype="http://schema.org/ItemList" class="product-list collection-matrix clearfix">
+          {% for i in (1..limit) %}
+            {% comment %}{% assign collection_group = products | map: 'id' %}{% endcomment %}
+            {% assign collection_group_thumb = collection_group | append : 'thumb' %}
+            {% assign collection_group_mobile = collection_group | append : 'mobile' %}
+              <div class="
+              {% if products_per_row == 2 %}
+                eight columns {% cycle collection_group_thumb: 'alpha', 'omega' %}
+              {% elsif products_per_row == 3 %}
+                one-third column {% cycle collection_group_thumb: 'alpha', '', 'omega' %}
+              {% elsif products_per_row == 4 %}
+                four columns {% cycle collection_group_thumb: 'alpha', '', '', 'omega' %}
+              {% elsif products_per_row == 5 %}
+                one-fifth column {% cycle collection_group_thumb: 'alpha', '', '', '', 'omega' %}
+              {% elsif products_per_row == 6 %}
+                one-sixth column {% cycle collection_group_thumb: 'alpha', '', '', '', '', 'omega' %}
+              {% else %}
+                one-seventh column {% cycle collection_group_thumb: 'alpha', '', '', '', '', '', 'omega' %}
+              {% endif %} thumbnail {% cycle collection_group_mobile: 'even', 'odd' %}
+              {% if settings.mobile_products_per_row == '1' %}
+                medium-down--one-half
+                small-down--one-whole
+              {% else %}
+                medium-down--one-half
+                small-down--one-half
+              {% endif %}">
+
+              <div class="product-wrap">
+                <div class="relative product_image swap-{{ settings.collection_secondary_image }}">
+                  <a href="#" itemprop="url">
+                    {% capture num %}{% cycle "1", "2", "3", "4", "5", "6" %}{% endcapture %}
+                    {{ 'product-' | append: num | placeholder_svg_tag: 'placeholder-svg placeholder-svg--product' }}
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {% if products_per_row == 2 %}
+              {% cycle collection_group: '', new_row %}
+            {% elsif products_per_row == 3 %}
+              {% cycle collection_group: '', '', new_row %}
+            {% elsif products_per_row == 4 %}
+              {% cycle collection_group: '', '', '', new_row %}
+            {% elsif products_per_row == 5 %}
+              {% cycle collection_group: '', '', '', '', new_row %}
+            {% elsif products_per_row == 6 %}
+              {% cycle collection_group: '', '', '', '', '', new_row %}
+            {% elsif products_per_row == 7 %}
+              {% cycle collection_group: '', '', '', '', '', '', new_row %}
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{% endif %}

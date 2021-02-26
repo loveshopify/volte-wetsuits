@@ -1,0 +1,35 @@
+<div class="container">
+  <div class="one-third column thumbnail gallery-image-wrapper">
+      {% if block.settings.detail_image_1 %}
+        <div class="gallery-cell">
+          <a href="{{ block.settings.detail_image_1 | img_url: '1520x' }}" class="lightbox" rel="detail-gallery">
+            <img src="{{ block.settings.detail_image_1 | img_url: '760x' }}" alt="{{ block.settings.detail_image_1.alt }}">
+          </a>
+        </div>
+      {% else %}
+        {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+      {% endif %}
+    </div>
+    <div class="one-third column thumbnail gallery-image-wrapper">
+      {% if block.settings.detail_image_2 %}
+        <div class="gallery-cell">
+          <a href="{{ block.settings.detail_image_2 | img_url: '1520x' }}" class="lightbox" rel="detail-gallery">
+            <img src="{{ block.settings.detail_image_2 | img_url: '760x' }}" alt="{{ block.settings.detail_image_2.alt }}">
+          </a>
+        </div>
+      {% else %}
+        {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+      {% endif %}
+    </div>
+    <div class="one-third column thumbnail gallery-image-wrapper">
+      {% if block.settings.detail_image_3 %}
+        <div class="gallery-cell">
+          <a href="{{ block.settings.detail_image_3 | img_url: '1520x' }}" class="lightbox" rel="detail-gallery">
+            <img src="{{ block.settings.detail_image_3 | img_url: '760x' }}" alt="{{ block.settings.detail_image_3.alt }}">
+          </a>
+        </div>
+      {% else %}
+        {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+      {% endif %}
+    </div>
+</div>

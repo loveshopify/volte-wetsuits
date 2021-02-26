@@ -1,0 +1,102 @@
+{% for product in products %}
+  {% assign collection_handles = product.collections | map: 'handle' %}
+  {% assign variant = product.selected_or_first_available_variant %}
+
+  <div class="product-{{ product.id }} section clearfix">
+    <div class="product_section js-product_section" itemscope itemtype="http://schema.org/Product">
+      <div class="product-images half">
+        {% include 'product-images', image_width: 'full' %}
+        <div class="banner_holder">
+          {% if settings.sale_banner_enabled and product.compare_at_price_max > product.price %}
+            <div class="sale_banner_product">{{ 'collections.general.sale' | t }}</div>
+          {% endif %}
+          {% if collection_handles contains 'new' %}
+            <div class="new_banner_product">{{ 'collections.general.new' | t }}</div>
+          {% endif %}
+          {% if collection_handles contains 'pre-order' %}
+            <div class="preorder_banner_product">{{ 'collections.general.pre_order' | t }}</div>
+          {% endif %}
+        </div>
+      </div>
+      <div class="product-details half">
+
+        {% if settings.display_vendor %}
+          <p class="vendor">
+            <span itemprop="brand" class="vendor">{{ product.vendor | link_to_vendor }}</span>
+          </p>
+        {% endif %}
+
+        {% if variant.sku != blank and settings.display_sku %}
+          <p class="sku">
+            <span itemprop="sku">{{ variant.sku }}</span>
+          </p>
+        {% endif %}
+        <h1 class="product_name" itemprop="name"><a href="{{ product.url }}">{{ product.title }}</a></h1>
+        <div class="feature_divider"></div>
+
+        {% assign product_tags = product.tags | join: ' ' %}
+        {% if product_tags contains 'meta-size-chart-' %}
+          {% for tag in product.tags %}
+            {% if tag contains 'meta-size-chart-' %}
+              <a href="#size-chart{{product.id}}" class="size_chart" data-remodal-target="size-chart{{product.id}}">{{ 'products.product.size_chart' | t }} <span class="icon-right-arrow"></span></a>
+              {% include 'popup-size-chart', product_id: product.id %}
+            {% endif %}
+          {% endfor %}
+        {% elsif settings.size_chart != blank %}
+          <a href="#size-chart" class="size_chart" data-remodal-target="size-chart">{{ 'products.product.size_chart' | t }} <span class="icon-right-arrow"></span></a>
+        {% endif %}
+
+        {% if collection_handles contains 'coming-soon' %}
+          <p class="modal_price">{{ 'collections.general.coming_soon' | t }}</p>
+        {% else %}
+          <p class="modal_price" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+            <meta itemprop="priceCurrency" content="{{ shop.currency }}" />
+            <meta itemprop="seller" content="{{ shop.name | escape }}" />
+            <link itemprop="availability" href="http://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}">
+            <meta itemprop="itemCondition" itemtype="http://schema.org/OfferItemCondition" content="http://schema.org/NewCondition"/>
+            
+            <span class="sold_out">{% if variant.available == false %}{{ 'products.product.sold_out' | t }}{% endif %}</span>
+            <span itemprop="price" content="{{ variant.price | money_without_currency | remove: "," }}" class="{% if variant.compare_at_price > variant.price %}sale{% endif %}">
+              <span class="current_price {% if product.available == false %}hidden{% endif %}">
+                {% if variant.price > 0 %}
+                  <span class="money">{{ variant.price | money }}</span>
+                {% else %}
+                  {{ settings.free_price_text }}
+                {% endif %}
+              </span>
+            </span>
+            <span class="was_price">
+            {% if variant.price < variant.compare_at_price and variant.available %}
+              <span class="money">{{ variant.compare_at_price | money }}</span>
+            {% endif %}
+            </span>
+          </p>
+
+          {% include 'product-notify-me' %}
+        {% endif %}
+
+        {% if settings.product_description_position == "top" %}
+          {% if settings.frontpage_display_description and product.description != blank %}
+            <div class="description" itemprop="description">
+              {{ product.description | split: '<!-- split -->' | first }}
+            </div>
+          {% endif %}
+        {% endif %}
+
+        {% unless collection_handles contains 'coming-soon' %}
+          <div class="js-product_section product_section">
+            {% include 'product-form' with 'product' %}
+          </div>
+        {% endunless %}
+
+        {% if settings.product_description_position == "bottom" %}
+          {% if settings.frontpage_display_description and product.description != blank %}
+           <div class="description bottom" itemprop="description">
+            {{ product.description | split: '<!-- split -->' | first }}
+           </div>
+          {% endif %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endfor %}

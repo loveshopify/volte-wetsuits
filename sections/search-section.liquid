@@ -1,0 +1,66 @@
+{% comment %}
+** Search - homepage partial **
+- Draggable section
+{% endcomment %}
+
+{% include 'include-search' %}
+
+{% schema %}
+
+{
+  "name": "Search",
+  "class": "search-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "search_title",
+      "label": "Heading",
+      "default": "Search our shop"
+    },
+    {
+      "type": "richtext",
+      "id": "search_text",
+      "label": "Subheading"
+    },
+    {
+      "type": "select",
+      "id": "search_section_text_align",
+      "label": "Text alignment",
+      "options": [
+         {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+     ],
+      "default": "center"
+    },
+    {
+      "type": "text",
+      "id": "search_term",
+      "label": "Placeholder text",
+      "default": "Search..."
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Background image",
+      "info":"1600 x 300px recommended"
+    }
+  ],
+  "presets": [{
+    "name": "Search",
+    "category": "Content",
+    "settings": {
+    }
+  }]
+}
+
+{% endschema %}

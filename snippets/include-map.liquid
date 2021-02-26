@@ -1,0 +1,89 @@
+{% if type == 'block' %}
+  {% assign id = block.id %}
+  {% assign wide_display = block.settings.wide_display %}
+  {% assign map_address = block.settings.map_address %}
+  {% assign api_key = block.settings.api_key %}
+  {% assign map_style = block.settings.map_style %}
+  {% assign map_height = block.settings.map_height %}
+  {% assign zoom_level = block.settings.zoom_level %}
+  {% assign show_pin = block.settings.show_pin %}
+  {% assign map_image = block.settings.map_image %}
+{% else %}
+  {% assign id = section.id %}
+  {% assign wide_display = section.settings.wide_display %}
+  {% assign map_address = section.settings.map_address %}
+  {% assign api_key = section.settings.api_key %}
+  {% assign map_style = section.settings.map_style %}
+  {% assign map_height = section.settings.map_height %}
+  {% assign zoom_level = section.settings.zoom_level %}
+  {% assign show_pin = section.settings.show_pin %}
+  {% assign map_image = section.settings.map_image %}
+{% endif %}
+
+
+<section class="map-section section--draggable map-id--{{id}} full-width--{{ wide_display }}">
+  {% if wide_display == false %}
+    <div class="container">
+      <div class="sixteen columns">
+  {% endif %}
+
+      {% if map_address != blank and api_key != blank %}
+        <div id="map--{{id}}" class="embed-container maps {% if api_key %}js-api-map{% endif %}">
+            {% if api_key != blank %}
+              <div class="map-section__container map" id="map-{{ id }}"
+                    data-address="{{ map_address | strip_html }}"
+                    data-zoom="{{ zoom_level }}"
+                    data-pin="{{ show_pin }}"
+                    data-id="map-{{ id }}"
+                    data-style="{{ map_style }}"
+                    data-api-key="{{ api_key }}"
+                    data-directions-address="{{ map_address | strip_html | handleize | replace: '_', '+' | replace: ' ', '+'}}">
+              </div>
+            {% endif %}
+        </div>
+
+      {% elsif map_address != blank and api_key == blank %}
+        <div id="map--{{id}}" class="embed-container maps">
+          <iframe width="100%"  height="{{ map_height }}" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?f=q&amp;source=embed&amp;hl=en&amp;geocode=&amp;q={% if map_address != blank %}{{ map_address | strip_html | replace: ' ', '+' }}{% else %}{{ shop.address.street }}{% endif %}&amp;z={{ zoom_level }}&amp;output=embed"></iframe>
+        </div>
+      {% else %}
+        <div id="map--{{id}}" class="map__placeholder maps">
+          {% if map_image == blank %}
+            {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg placeholder-svg--map' }}
+          {% else %}
+            <img  src="{{ map_image | img_url: '200x' }}"
+                  alt="{% if map_image.alt != blank %}{{ map_image.alt | escape }}{% else %}{{ title | escape }}{% endif %}"
+                  class="lazyload lazyload--fade-in"
+                  data-sizes="auto"
+                  data-src="{{ map_image | img_url: '1600x' }}"
+                  data-srcset=" {{ map_image | img_url: '400x' }} 400w,
+                                {{ map_image | img_url: '500x' }} 500w,
+                                {{ map_image | img_url: '600x' }} 600w,
+                                {{ map_image | img_url: '700x' }} 700w,
+                                {{ map_image | img_url: '800x' }} 800w,
+                                {{ map_image | img_url: '900x' }} 900w,
+                                {{ map_image | img_url: '1200x' }} 1200w,
+                                {{ map_image | img_url: '1600x' }} 1600w"
+                />
+          {% endif %}
+        </div>
+      {% endif %}
+  {% if wide_display == false %}
+      <div>
+    </div>
+  {% endif %}
+</section>
+
+<style>
+  #map--{{id}}.maps .map,
+  #map--{{id}}.maps iframe,
+  #map--{{id}}.maps .placeholder-svg {
+    height: {{ map_height }}px;
+  }
+  #map--{{id}}.map__placeholder img {
+    max-height: {{ map_height }}px;
+  }
+  .maps {
+    max-width: 100%;
+  }
+</style>

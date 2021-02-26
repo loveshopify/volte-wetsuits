@@ -1,0 +1,49 @@
+<div class="newsletter">
+  <div class="popup-signup-show--{{settings.newsletter_popup_form }} clearfix">
+    <span class="message"></span>
+    {% if settings.mailchimp_link != blank %}
+      <form action="{{ settings.mailchimp_link }}" method="post" name="mc-embedded-subscribe-form" id="contact_form" target="_blank">
+        <div class="input-row">
+          {% if settings.display_first_name %}
+            <input type="text" value="" class="firstName" name="FNAME" placeholder="{{ 'general.newsletter_form.subscriber_first_name' | t }}">
+          {% endif %}
+          {% if settings.display_last_name %}
+            <input type="text" value="" name="LNAME" placeholder="{{ 'general.newsletter_form.subscriber_last_name' | t }}">
+          {% endif %}
+        </div>
+
+        <div class="input-row">        
+          <input type="email" value="" name="EMAIL" class="contact_email" placeholder="{{ 'general.newsletter_form.placeholder' | t }}">
+          <input type="submit" value="{{ 'general.newsletter_form.submit' | t }}" class="action_button sign_up" name="subscribe" />
+        </div>
+      </form>
+    {% else %}
+      {% form 'customer' %}
+         {% if form.posted_successfully? %}
+           <p><em>{{ 'general.newsletter_form.success_text' | t }}</em></p>
+         {% elsif form.errors %}
+           {% for field in form.errors %}
+             <p><em>{{ field }} - {{ form.errors.messages[field] }}</em></p>
+           {% endfor %}
+         {% endif %}
+
+         <input type="hidden" name="contact[tags]" value="prospect,newsletter"/>
+         <div class="input-row">
+          {% if settings.display_first_name %}
+            <input type="text" class="firstName" name="contact[first_name]" placeholder="{{ 'general.newsletter_form.subscriber_first_name' | t }}" />
+          {% endif %}
+          {% if settings.display_last_name %}
+            <input type="text" name="contact[last_name]" placeholder="{{ 'general.newsletter_form.subscriber_last_name' | t }}" />
+          {% endif %}
+         </div>
+
+        <div class="input-row n_form">
+          <input type="hidden" name="challenge" value="false" />
+          <input type="email" class="contact_email" name="contact[email]" required placeholder="{{ 'general.newsletter_form.placeholder' | t }}" />
+          <input type='submit' class="action_button sign_up" value="{{ 'general.newsletter_form.top_submit' | t }}" />
+        </div>
+    	<button type="button" class="continue_button">{{ 'general.newsletter_form.newsletter_continue' | t }}</button>
+       {% endform %}
+    {% endif %}
+  </div>
+</div>

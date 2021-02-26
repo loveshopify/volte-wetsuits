@@ -1,0 +1,56 @@
+<div class="remodal size-chart-remodal" data-remodal-id="size-chart{{product_id}}" data-remodal-options="hashTracking: false">
+<a data-remodal-action="close" class="remodal-close"></a>
+
+  <div class="size-chart-wrap">
+  {% assign product_tags = product.tags | join: ' ' %}
+  {% if product_tags contains 'meta-size-chart-' %}
+    {% for tag in product.tags %}
+      {% if tag contains 'meta-size-chart-' %}
+        {% assign size_chart = tag | handle | remove: 'meta-size-chart-' %}
+        <h5 class="center">{{ pages[size_chart].title }}</h5>
+        <div class="feature_divider"></div>
+        {{ pages[size_chart].content }}
+      {% endif %}
+    {% endfor %}
+  {% elsif settings.size_chart != blank %}
+    
+    {% for collection in product.collections %}
+    	{% if collection.title contains "Men's" %}
+    		{% assign mens_size = true %}
+    	  {% elsif collection.title contains "Women's" %}
+    		{% assign womens_size = true %}
+          {% elsif collection.title contains "Youth" %}
+    		{% assign youth_size = true %}
+    	  {% else %}
+    		{% assign mens_size = false %}
+    		{% assign womens_size = false %}
+    		{% assign youth_size = false %}
+    	{% endif %}
+    
+    {% endfor %}
+    
+    
+    
+    {% if mens_size == true %}
+    <h5 class="center">{{ pages.mens-sizing-chart.title }}</h5>
+    <div class="feature_divider"></div>
+    <div class="center">
+    {{ pages.mens-sizing-chart.content }}
+                </div>
+    {% elsif womens_size == true %}
+    <h5 class="center">{{ pages.womens-sizing-chart.title }}</h5>
+    <div class="feature_divider"></div>
+    {{ pages.womens-sizing-chart.content }}
+    {% elsif youth_size == true %}
+    <h5 class="center">{{ pages.youth-sizing-chart.title }}</h5>
+    <div class="feature_divider"></div>
+    {{ pages.youth-sizing-chart.content }}
+    {% else %}
+    <h5 class="center">{{ pages[settings.size_chart].title }}</h5>
+    <div class="feature_divider"></div>
+    {{ pages[settings.size_chart].content }}
+    {% endif %}
+  {% endif %}
+  </div>
+
+</div>

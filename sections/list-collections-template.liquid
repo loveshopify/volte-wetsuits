@@ -1,0 +1,304 @@
+{% comment %}
+** Collection list - default view **
+- Template
+- Uses blocks
+- This template can be viewed by going to /collections of the shop.
+{% endcomment %}
+
+{% if section.settings.image %}
+  {% capture sizes %}100x,480x,765x,1400x,2048x{% endcapture %}
+  {% assign sizes = sizes | split: ',' %}
+
+  <header class="banner center page_banner dark-overlay-{{ section.settings.image_darken }}">
+    <img
+          src="{{ section.settings.image | img_url: sizes.first }}"
+          alt="{% if section.settings.image.alt != blank %}{{ section.settings.image.alt | escape }}{% else %}{{ 'collections.general.title' | t | escape }}{% endif %}"
+          class="lazyload {{ settings.image_loading_style }}"
+          sizes="100vw"
+          srcset="{%- for size in sizes -%}
+                    {{ section.settings.image | img_url: size, format: 'pjpg' }}
+                    {{ size | replace: "x", "w" }}{% unless forloop.last %},{% endunless %}
+                  {%- endfor -%}
+          " />
+      {% if section.settings.display_collection_title %}
+        <div class="caption">
+          <h1 class="headline">{{ 'collections.general.title' | t }}</h1>
+        </div>
+      {% endif %}
+  </header>
+{% endif %}
+
+<a name="pagecontent" id="pagecontent"></a>
+
+<div class="container">
+  {% paginate collections by section.settings.pagination_limit %}
+    {% assign collections_per_row = section.settings.collections_per_row %}
+    <div class="clearfix breadcrumb-collection">
+      {% if section.settings.collection_breadcrumb %}
+        <div class="eight columns breadcrumb_text" itemscope itemtype="http://schema.org/BreadcrumbList">
+          <span itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="{{ shop.url }}" title="{{ shop.name | escape }}" itemprop="item" class="breadcrumb_link"><span itemprop="name">{{ 'general.breadcrumbs.home' | t }}</span></a></span>
+          <span class="breadcrumb-divider">/</span>
+          <span itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem"><a href="/collections" itemprop="item" class="breadcrumb_link"><span itemprop="name">{{ 'collections.general.title' | t }}</span></a></span>
+
+          {% if paginate.pages != 0 %}
+            <span class="breadcrumb-divider">/</span> {{ 'general.breadcrumbs.page' | t: current_page: paginate.current_page, pages: paginate.pages }}
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+    <div class="section clearfix">
+      {% if section.settings.display_collection_title and section.settings.image == blank %}
+        <div class="sixteen columns">
+          <h1>{{ 'collections.general.title' | t }}</h1>
+        </div>
+      {% endif %}
+      <div class="sixteen columns">
+        <div class="feature_divider"></div>
+      </div>
+    </div>
+
+    {% comment %}Check to see if sidebar should be enabled{% endcomment %}
+    {% if section.blocks.size > 0 %}
+      {% assign sidebar = true %}
+    {% else %}
+      {% assign sidebar = false %}
+    {% endif %}
+
+    {% if sidebar %}
+      {% include 'sidebar' %}
+      <div class="twelve columns list-collection-wrapper">
+    {% else %}
+      <div class="sixteen columns list-collection-wrapper">
+    {% endif %}
+
+      {% capture new_row %}
+          <br class="clear product_clear" />
+      {% endcapture %}
+
+      {% for collection in collections %}
+        {% unless collection.handle == 'frontpage' %}
+          {% capture collection_title %}{{ collection.title | escape }}{% endcapture %}
+          {% if sidebar %}
+            <div class="{% if collections_per_row == 2 %}six columns {% cycle 'alpha', 'omega' %}{% elsif collections_per_row == 3 %}four columns {% cycle 'alpha', '', 'omega' %}{% else %}three columns {% cycle 'alpha', '', '', 'omega' %}{% endif %} thumbnail {% cycle 'even', 'odd' %}">
+          {% else %}
+            <div class="{% if collections_per_row == 2 %}eight columns {% cycle 'alpha', 'omega' %}{% elsif collections_per_row == 3 %}one-third column {% cycle 'alpha', '', 'omega' %}{% else %}four columns {% cycle 'alpha', '', '', 'omega' %}{% endif %} thumbnail {% cycle 'even', 'odd' %}">
+          {% endif %}
+
+        <div class="product-wrap">
+            {% if collection.image %}
+
+              <div class="image__container">
+
+                <img  src="{{ collection.image.src | collection_img_url: '100x' }}"
+                      class="lazyload {{ settings.image_loading_style }}"
+                      alt="{{ collection.title | escape }}"
+                      data-sizes="auto"
+                      data-src="{{ collection.image.src | collection_img_url: '1160x' }}"
+                      data-srcset=" {{ collection.image.src | collection_img_url: '1160x'}} 1160w,
+                                    {{ collection.image.src | collection_img_url: '760x'}} 760w,
+                                    {{ collection.image.src | collection_img_url: '472x'}} 472w,
+                                    {{ collection.image.src | collection_img_url: '380x' }} 380w,
+                                    {{ collection.image.src | collection_img_url: '236x' }} 236w"
+                      />
+              </div>
+            {% else %}
+
+              <div class="image__container">
+                <img  src="{{ collection.products.first.featured_image | product_img_url: '100x' }}"
+                      class="lazyload {{ settings.image_loading_style }}"
+                      alt="{{ collection.title | escape }}"
+                      data-sizes="auto"
+                      data-src="{{ collection.products.first.featured_image | product_img_url: '1160x' }}"
+                      data-srcset=" {{ collection.products.first.featured_image | product_img_url: '1160x'}} 1160w,
+                                    {{ collection.products.first.featured_image | product_img_url: '760x'}} 760w,
+                                    {{ collection.products.first.featured_image | product_img_url: '472x'}} 472w,
+                                    {{ collection.products.first.featured_image | product_img_url: '380x' }} 380w,
+                                    {{ collection.products.first.featured_image | product_img_url: '236x' }} 236w"
+                      />
+              </div>
+            {% endif %}
+            <a href="{{ collection.url }}" title="{{ collection_title }}" class="hidden-product-link">{{ collection_title }}</a>
+            {% if settings.thumbnail_hover_enabled %}
+                <div class="thumbnail-overlay">
+                <a href="{{ collection.url }}" title="{{ collection_title }}" class="hidden-product-link">{{ collection_title }}</a>
+                  <div class="info">
+                      <div class="collection-details">
+                        <span class="title">{{ collection.title }}</span>
+                      </div>
+                      <a href="{{ collection.url }}" title="{{ collection_title }}"><span class="view_all">{{ 'collections.general.view_all' | t }}</span></a>
+                  </div>
+                </div>
+            {% endif %}
+            <a class="collection-info__caption {% if settings.thumbnail_hover_enabled %}hidden{% endif %}" href="{{ collection.url }}" itemprop="url">
+              <span class="title">{{ collection.title }}</span>
+            </a>
+          </div>
+        </div>
+
+          {% if collections_per_row == 2 %}
+            {% cycle '', new_row %}
+          {% elsif collections_per_row == 3 %}
+            {% cycle '', '', new_row %}
+          {% elsif collections_per_row == 4 %}
+            {% cycle '', '', '', new_row %}
+          {% endif %}
+        {% endunless %}
+      {% endfor %}
+
+      {% include 'pagination' with sidebar %}
+    </div>
+  {% endpaginate %}
+</div>
+
+{% schema %}
+
+{
+  "name": "Collections",
+  "class": "collection-template-section",
+  "settings": [
+    {
+      "type": "range",
+      "id": "collections_per_row",
+      "label": "Collections per row",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "pagination_limit",
+      "label": "Collections per page",
+      "min": 2,
+      "max": 50,
+      "step": 1,
+      "default": 48
+    },
+    {
+      "type": "checkbox",
+      "id": "display_collection_title",
+      "label": "Show page title"
+    },
+    {
+      "type": "checkbox",
+      "id": "collection_breadcrumb",
+      "label": "Show breadcrumb links",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Banner image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Banner image",
+      "info": "1600 x 1000px recommended"
+    },
+    {
+      "type": "checkbox",
+      "id": "image_darken",
+      "label": "Darken banner image",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Sidebar"
+    },
+    {
+      "type": "paragraph",
+      "content": "Create a sidebar by adding content blocks."
+    },
+    {
+      "type": "checkbox",
+      "id": "toggle",
+      "label": "Toggle sidebar content",
+      "default": false
+    }
+  ],
+  "blocks": [
+    {
+      "type": "filter_by_collection",
+      "name": "Collection list",
+      "limit": 1
+    },
+    {
+      "type": "menu",
+      "name": "Menu",
+      "settings": [
+        {
+          "type": "link_list",
+          "id": "custom_menu_linklist",
+          "label": "Menu"
+        }
+      ]
+    },
+    {
+      "type": "page",
+      "name": "Page",
+      "settings": [
+        {
+          "type": "page",
+          "id": "content_page",
+          "label": "Page"
+        }
+      ]
+    },
+    {
+      "type": "recently_viewed",
+      "name": "Recently viewed products",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "To test the recently viewed products, view your online store outside of the Editor and visit multiple product pages ([?](https:\/\/help.outofthesandbox.com\/hc\/en-us\/articles\/115008765228))"
+        },
+        {
+          "type": "text",
+          "id": "sidebar_rv_title",
+          "label": "Title",
+          "default": "Recently Viewed"
+        },
+        {
+          "type": "range",
+          "id": "sidebar_rv_per",
+          "label": "Products limit",
+          "min": 1,
+          "max": 4,
+          "step": 1,
+          "default": 3
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Text",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Heading"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Text area can be used for special announcements or general information.</p>"
+        }
+      ]
+    },
+    {
+      "type": "filter_by_type",
+      "name": "Type list",
+      "limit": 1
+    },
+    {
+      "type": "filter_by_vendor",
+      "name": "Vendor list",
+      "limit": 1
+    }
+  ]
+}
+
+{% endschema %}

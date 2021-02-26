@@ -1,0 +1,140 @@
+
+<div class="list-collections clearfix equal-columns--clear equal-columns--outside-trim">
+  {% assign linklist = linklists[collection.handle] %}
+
+  {% for link in linklist.links %}
+
+    {% comment %}
+      This section supports linking to collections, products, pages, and blogs. It will use the first image found in the page content or blog article.
+    {% endcomment %}
+
+    {% assign link_item = link.object %}
+    {% assign link_image = '' %}
+    {% capture link_title %}{{ link.title | escape }}{% endcapture %}
+
+    <div class="
+    {% if collections_per_row == 2 %}
+      eight columns
+    {% elsif collections_per_row == 3 %}
+      one-third column
+    {% else %}
+      four columns
+    {% endif %}
+    thumbnail {% cycle 'even', 'odd' %} align-height--false
+    {% if settings.mobile_products_per_row == '1' %}
+      medium-down--one-half
+      small-down--one-whole
+    {% else %}
+      medium-down--one-half
+      small-down--one-half
+    {% endif %}">
+
+      <div class="product-wrap">
+        {% capture link_image %}
+          {% if link.type == 'collection_link' %}
+            {% if link_item.image %}
+                <img  src="{{ link_item.image.src | img_url: '100x' }}"
+                      class="lazyload {{ settings.image_loading_style }}"
+                      alt="{{ link_title }}"
+                      style="max-width: {{- link_item.image.width -}}px;"
+                      data-sizes="auto"
+                      data-src="{{ link_item.image.src | img_url: '1160x' }}"
+                      data-srcset=" {{ link_item.image.src | img_url: '1160x' }} 1160w,
+                                    {{ link_item.image.src | img_url: '728x' }} 728w,
+                                    {{ link_item.image.src | img_url: '580x' }} 580w,
+                                    {{ link_item.image.src | img_url: '344x' }} 344w,
+                                    {{ link_item.image.src | img_url: '280x' }} 280w,
+                                    {{ link_item.image.src | img_url: '172x' }} 172w"
+                      />
+              {% else %}
+                <img  src="{{ link_item.products.first.featured_image | img_url: '100x' }}"
+                      class="lazyload {{ settings.image_loading_style }}"
+                      alt="{{ link_title }}"
+                      style="max-width: {{- link_item.products.first.featured_image.width -}}px;"
+                      data-sizes="auto"
+                      data-cool="true"
+                      data-src="{{ link_item.products.first.featured_image | img_url: '1160x' }}"
+                      data-srcset=" {{ link_item.products.first.featured_image | img_url: '1160x'}} 1160w,
+                                    {{ link_item.products.first.featured_image | img_url: '728x' }} 728w,
+                                    {{ link_item.products.first.featured_image | img_url: '580x' }} 580w,
+                                    {{ link_item.products.first.featured_image | img_url: '344x' }} 344w,
+                                    {{ link_item.products.first.featured_image | img_url: '280x' }} 280w,
+                                    {{ link_item.products.first.featured_image | img_url: '172x' }} 172w"
+                      />
+              {% endif %}
+            {% elsif link.type == 'product_link' %}
+              <img  src="{{ link_item.featured_image | product_img_url: '100x' }}"
+                    alt="{{ link_title }}"
+                    class="lazyload {{ settings.image_loading_style }}"
+                    style="max-width: {{- link_item.featured_image.width -}}px;"
+                    data-sizes="auto"
+                    data-src="{{ link_item.featured_image | product_img_url: '1160x' }}"
+                    data-srcset=" {{ link_item.featured_image | product_img_url: '1160x' }} 1160w,
+                                  {{ link_item.featured_image | product_img_url: '728x' }} 728w,
+                                  {{ link_item.featured_image | product_img_url: '560x' }} 560w,
+                                  {{ link_item.featured_image | product_img_url: '344x' }} 344w,
+                                  {{ link_item.featured_image | product_img_url: '280x' }} 280w,
+                                  {{ link_item.featured_image | product_img_url: '172x' }} 172w"
+                     />
+            {% elsif link.type == 'page_link' %}
+              {% if link_item.content contains "<img" %}
+                {% assign src = link_item.content | split: 'src="' %}
+                {% assign src = src[1] | split: '"' | first %}
+                {% if src %}
+                  {% assign link_image = src %}
+                  <img  src="{{ link_image }}"
+                        alt="{{ link_title }}"
+                        class="lazyload {{ settings.image_loading_style }}"
+                         />
+                {% endif %}
+              {% endif %}
+            {% elsif link.type == 'blog_link' %}
+              {% if link_item.articles.first.image %}
+                <img  src="{{ link_item.articles.first.image | img_url: '100x' }}"
+                      alt="{{ link_title }}"
+                      class="lazyload {{ settings.image_loading_style }}"
+                      style="max-width: {{- link_item.articles.first.image.width -}}px;"
+                      data-sizes="auto"
+                      data-src="{{ link_item.articles.first.image | img_url: '580x' }}"
+                      data-srcset=" {{ link_item.articles.first.image | img_url: '1160x' }} 1160w,
+                                    {{ link_item.articles.first.image | img_url: '728x' }} 728w,
+                                    {{ link_item.articles.first.image | img_url: '580x' }} 580w,
+                                    {{ link_item.articles.first.image | img_url: '344x' }} 344w,
+                                    {{ link_item.articles.first.image | img_url: '280x' }} 280w,
+                                    {{ link_item.articles.first.image | img_url: '172x' }} 172w"
+                  />
+              {% elsif link_item.articles.first.content contains "<img" %}
+                {% assign src = link_item.articles.first.content | split: 'src="' %}
+                {% assign src = src[1] | split: '"' | first %}
+                {% if src %}
+                  {% assign link_image = src %}
+                  <img  src="{{ link_image }}"
+                        alt="{{ link_title }}"
+                        class="lazyload {{ settings.image_loading_style }}"
+                         />
+                {% endif %}
+              {% endif %}
+            {% endif %}
+          {% endcapture %}
+
+          {{ link_image }}
+          <a href="{{ link.url }}" title="{{ link_title }}" class="hidden-product-link">{{ link_title }}</a>
+          {% if settings.thumbnail_hover_enabled %}
+              <div class="thumbnail-overlay">
+              <a href="{{ link.url }}" title="{{ link_title }}" class="hidden-product-link">{{ link_title }}</a>
+                <div class="info">
+                    <div class="collection-details">
+                      <span class="title">{{ link_title }}</span>
+                    </div>
+                    <a href="{{ link.url }}" title="{{ link_title }}"><span class="view_all">{{ 'collections.general.view_all' | t }}</span></a>
+                </div>
+              </div>
+          {% endif %}
+          <a class="collection-info__caption {% if settings.thumbnail_hover_enabled %}hidden{% endif %}" href="{{ link.url }}" itemprop="url">
+            <span class="title">{{ link_title }}</span>
+          </a>
+        </div>
+      </div>
+
+    {% endfor %}
+  </div>

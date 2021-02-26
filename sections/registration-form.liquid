@@ -1,0 +1,107 @@
+<a name="pagecontent" id="pagecontent"></a>
+{% if section.settings.image != nil %}
+  <header class="banner center page_banner dark-overlay-{{ section.settings.image_darken }}">
+    <img  src="{{ section.settings.image | img_url: '100x' }}"
+          alt="{% if section.settings.image.alt != blank %}{{ section.settings.image.alt }}{% else %}{{ blog.title | escape }}{% endif %}"
+          class="lazyload {{ settings.image_loading_style }}"
+          data-src="{{ section.settings.image | img_url: '1400x' }}"
+          sizes="100vw"
+          srcset="{{ section.settings.image | img_url: '480x' }} 480w,
+                  {{ section.settings.image | img_url: '765x' }} 765w,
+                  {{ section.settings.image | img_url: '1400x' }} 1400w,
+                  {{ section.settings.image | img_url: '2048x' }} 2048w"
+           />
+     	<div class="caption captionOverlay--true">
+          <h1 class="headline">{{ 'customer.register.title' | t }}</h1>
+        </div>
+  </header>
+
+{% endif %}
+
+
+  <div class="register-form-box">
+  	<div class="container main content">
+   <!-- <br class="clear" /> -->
+    <div id="customer">
+      <!-- Create Customer -->
+      <div id="create-customer">
+
+        {% form 'create_customer' %}
+          {{ form.errors | default_errors }}
+
+          <div id="dfirst_name" class="eight columns alpha">
+            <label for="name" class="login">{{ 'customer.register.name' | t }}</label>
+            <input type="text" value="" name="customer[name]" placeholder="{{ 'customer.register.p_name' | t }}" id="name" class="large" size="30" />
+          </div>
+
+          <div id="demail" class="eight columns omega">
+            <label for="email" class="login">{{ 'customer.register.email' | t }}</label>
+            <input type="email" value="" name="customer[email]" placeholder="{{ 'customer.register.p_email' | t }}" id="email" class="large" size="30" />
+          </div>
+
+          <div id="dpassword" class="eight columns alpha">
+            <label for="password" class="login">{{ 'customer.register.password' | t }}</label>
+            <input type="password" value="" name="customer[password]" id="password" placeholder="{{ 'customer.register.p_password' | t }}" class="large password" size="30" />
+          </div>
+        
+          <div id="dr_password" class="eight columns omega">
+            <label for="r_password" class="login">{{ 'customer.register.r_password' | t }}</label>
+            <input type="password" value="" name="r_password" id="r_password" placeholder="{{ 'customer.register.p_r_password' | t }}" class="large password" size="30" />
+          </div>
+
+
+          {% if section.settings.text %}
+            {{ section.settings.text }}
+          {% endif %}
+
+          <div class="acceptsMarketing hide">
+            <input type="checkbox" id="customer[accepts_marketing]" name="customer[accepts_marketing]">
+            <label for="customer[accepts_marketing]">{{ 'customer.register.accepts_marketing' | t }}</label>
+          </div>
+        
+        <div class="four columns offset-by-six">
+		 <div class="register-account-button">
+          <div class="action_bottom">
+            <input class="btn action_button" type="submit" value="{{ 'customer.register.sign_up' | t }}" />            
+          </div>
+        
+          <p>
+              {{ 'customer.register.returning_customer_label' | t }} {{ 'customer.register.sign_in_html' | t | customer_login_link }}
+          </p>
+		</div>
+        </div>
+           
+        {% endform %}
+        
+      </div><!-- /#create-customer -->
+    </div>
+  </div>
+  </div>
+
+
+
+{% schema %}
+  {
+    "name": "Register",
+    "class": "register-section",
+    "settings": [
+	  {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Banner image",
+        "info": "1800 x 800px recommended"
+      },
+      {
+        "type": "checkbox",
+        "id": "image_darken",
+        "label": "Darken banner image",
+        "default": false
+      },
+      {
+        "type": "richtext",
+        "id": "text",
+        "label": "Text"
+      }
+    ]
+  }
+{% endschema %}

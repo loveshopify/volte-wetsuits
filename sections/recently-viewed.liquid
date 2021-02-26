@@ -1,0 +1,63 @@
+{% comment %}
+** Recently viewed - homepage partial **
+- Draggable section
+{% endcomment %}
+
+{% include 'include-recently-viewed' %}
+
+{% schema %}
+{
+  "name": "Recently viewed products",
+  "class": "recently-viewed",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "To test the recently viewed products, view your online store outside of the Editor and visit multiple product pages ([?](https:\/\/help.outofthesandbox.com\/hc\/en-us\/articles\/115008765228))"
+    },
+    {
+      "type": "text",
+      "id": "rv_title",
+      "label": "Heading",
+      "default": "Recently viewed products"
+    },
+    {
+      "type": "radio",
+      "id": "rv_products_style",
+      "label": "Layout",
+      "default": "grid",
+      "options": [
+        {
+          "value": "slider",
+          "label": "Slider"
+        },
+        {
+          "value": "grid",
+          "label": "Grid"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "rv_max_display",
+      "label": "Products limit",
+      "min": 3,
+      "max": 12,
+      "step": 1,
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "rv_per",
+      "label": "Products per row",
+      "min": 3,
+      "max": 5,
+      "step": 1,
+      "default": 4
+    }
+  ],
+  "presets": [{
+    "name": "Recently viewed products",
+    "category": "Product"
+  }]
+}
+{% endschema %}

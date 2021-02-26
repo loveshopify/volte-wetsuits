@@ -1,0 +1,35 @@
+<div class="product-details">
+  <span class="title" itemprop="name">{{ product.title }}</span>
+  {% if settings.enable_shopify_collection_badges %}
+    <div class="shopify-reviews reviewsVisibility--{{settings.enable_shopify_review_comments}}">
+      <span class="shopify-product-reviews-badge" data-id="{{ product.id }}"></span>
+    </div>
+  {% endif %}
+  {% if settings.display_vendor %}
+    <span itemprop="brand" class="brand">{{ product.vendor }}</span>
+  {% endif %}
+
+  {% if collection_handles contains 'coming-soon' %}
+    <span class="modal_price">{{ 'collections.general.coming_soon' | t }}</span>
+  {% else %}
+    <span class="price {% if product.compare_at_price_max > product.price %}sale{% endif %}">
+      {% if product.available %}
+        {% if product.price_varies and product.price_min > 0 %}
+          <small><em>{{ 'products.general.from' | t }}</em></small>
+        {% endif %}
+          {% if product.price_min > 0 %}
+            <span class="money">{{ product.price_min | money }}</span>
+          {% else %}
+            {{ settings.free_price_text }}
+          {% endif %}
+      {% else %}
+        <span class="sold_out">{{ 'products.product.sold_out' | t }}</span>
+      {% endif %}
+      {% if product.compare_at_price_max > product.price %}
+        <span class="was_price">
+          <span class="money">{{ product.compare_at_price_max | money }}</span>
+        </span>
+      {% endif %}
+    </span>
+  {% endif %}
+</div>

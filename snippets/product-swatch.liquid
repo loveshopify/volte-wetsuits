@@ -1,0 +1,99 @@
+{% comment %}
+  Set the extension of your color files below. Use 'png', 'jpeg', 'jpg' or 'gif'.
+{% endcomment %}
+
+{% assign file_extension = 'png' %}
+
+{% assign swatch = product-swatch %}
+{% assign found_option = false %}
+{% assign is_color = false %}
+{% assign option_index = 0 %}
+
+{% for option in product.options %}
+  {% if option == swatch %}
+    {% assign found_option = true %}
+    {% assign option_index = forloop.index0 %}
+    {% assign downcased_option = swatch | downcase %}
+    {% if downcased_option contains 'color' or downcased_option contains 'colour' %}
+      {% assign is_color = true %}
+    {% endif %}
+  {% endif %}
+{% endfor %}
+
+<div class="swatch clearfix" data-option-index="{{ option_index }}">
+  <div class="option_title">{{ swatch }}</div>
+  {% if downcased_option contains 'style' %}
+  
+  {% assign values = '' %}
+  {% for variant in product.variants %}
+  
+    {% assign value = variant.options[option_index] %}
+    {% unless values contains value %}
+      {% assign values = values | join: ',' %}
+      {% assign values = values | append: ',' | append: value %}
+      {% assign values = values | split: ',' %}
+
+      <input  id="swatch-{{ option_index }}-{{ value | handle }}-{{ product.id }}{% if section.id %}-{{ section.id }}{% endif %}" type="radio" name="option-{{ option_index }}" value="{{ value | escape }}"{% if forloop.first %} checked{% endif %} />
+      <div  data-image-id="{{variant.featured_image.id}}" data-value="{{ value | escape }}" class="variantstyle swatch-element {% if is_color %}color {% endif %}{{ value | handle }}-swatch {% if variant.available %}available{% else %}soldout{% endif %}">
+        {% if is_color %}
+          <div class="tooltip">{{ value }}</div>
+        {% endif %}
+        {% if is_color %}
+          <label for="swatch-{{ option_index }}-{{ value | handle }}-{{ product.id }}{% if section.id %}-{{ section.id }}{% endif %}" style="background-image: url({{ value | handle | append: '.' | append: file_extension | asset_img_url: '50x' | prepend: 'https:' }}); background-color: {{ value | split: ' ' | last | handle }};">
+            <span class="crossed-out"></span>
+          </label>
+        {% else %}
+          <label for="swatch-{{ option_index }}-{{ value | handle }}-{{ product.id }}{% if section.id %}-{{ section.id }}{% endif %}">
+            <img src='{{ variant.image.src | product_img_url: "medium" }}'  width="50px" align="middle">
+            <span class="crossed-out"></span>
+          </label>
+        {% endif %}
+      </div>
+    {% endunless %}
+  {% endfor %}
+  
+  {% else %}
+  
+  {% assign values = '' %}
+  {% for variant in product.variants %}
+  
+    {% assign value = variant.options[option_index] %}
+    {% unless values contains value %}
+      {% assign values = values | join: ',' %}
+      {% assign values = values | append: ',' | append: value %}
+      {% assign values = values | split: ',' %}
+
+      <input  id="swatch-{{ option_index }}-{{ value | handle }}-{{ product.id }}{% if section.id %}-{{ section.id }}{% endif %}" type="radio" name="option-{{ option_index }}" value="{{ value | escape }}"{% if forloop.first %} checked{% endif %} />
+      <div data-image-id="{{variant.featured_image.id}}" data-value="{{ value | escape }}" class="swatch-element {% if is_color %}color {% endif %}{{ value | handle }}-swatch {% if variant.available %}available{% else %}soldout{% endif %}">
+        {% if is_color %}
+          <div class="tooltip">{{ value }}</div>
+        {% endif %}
+        {% if is_color %}
+          <label for="swatch-{{ option_index }}-{{ value | handle }}-{{ product.id }}{% if section.id %}-{{ section.id }}{% endif %}" style="background-image: url({{ value | handle | append: '.' | append: file_extension | asset_img_url: '50x' | prepend: 'https:' }}); background-color: {{ value | split: ' ' | last | handle }};">
+            <span class="crossed-out"></span>
+          </label>
+        {% else %}
+          <label for="swatch-{{ option_index }}-{{ value | handle }}-{{ product.id }}{% if section.id %}-{{ section.id }}{% endif %}">
+            {{ value }}
+            <span class="crossed-out"></span>
+          </label>
+        {% endif %}
+      </div>
+    {% endunless %}
+  {% endfor %}
+  
+  {% endif %}
+  
+  {% assign product_tags = product.tags | join: ' ' %}
+          {% if product_tags contains 'meta-size-chart-' %}
+            {% for tag in product.tags %}
+              {% if tag contains 'meta-size-chart-' %}
+                <a href="#size-chart{{product.id}}" class="size_chart" data-remodal-target="size-chart{{product.id}}" data-no-instant>{{ 'products.product.size_chart' | t }} <span class="icon-right-arrow"></span></a>
+                {% include 'popup-size-chart', product_id: product.id %}
+              {% endif %}
+            {% endfor %}
+          {% elsif settings.size_chart != blank %}
+            <a href="#size-chart" class="size_chart" data-remodal-target="size-chart" data-no-instant>{{ 'products.product.size_chart' | t }} <span class="icon-right-arrow"></span></a>
+          {% endif %}    
+  
+</div>

@@ -1,0 +1,25 @@
+{% assign collection_handles = product.collections | map: 'handle' %}
+{% assign variant = product.selected_or_first_available_variant %}
+<span class="quick_shop ss-icon js-quick-shop-link"
+      data-no-instant
+      data-remodal-target="quick-shop"
+      data-id="{{ product.id }}"
+      data-handle="{{ product.handle }}"
+      data-money-format="{{ shop.money_format }}"
+      data-single-variant="{% if product.has_only_default_variant %}true{% else %}false{% endif %}"
+      data-url="{{ product.url | within: collection }}"
+      data-title="{{ product.title | escape }}"
+      data-details-text="{{ 'collections.general.view_product_details_html' | t | escape}}"
+      data-full-description="{{ product.description | split: '<!-- split -->' | first | escape }}"
+      data-regular-description="{{ product.description | strip_html | truncatewords: settings.description_words | replace: 'Description', '' | replace: 'Dimensions', '' | replace: 'Details', '' | replace: 'Specs', '' | replace: 'Shipping', '' | replace: 'Size', '' | escape }}"
+      data-images="{% for image in product.images %}{{ image.id }} || {{ image.alt | escape }} ||{% endfor %}"
+      data-collection-handles="{{ collection_handles | join: ','}}"
+>
+  {{ 'collections.general.quick_shop' | t }}
+</span>
+<div class="js-forms form-holder-{{ product.id }}" style="display: none">
+    {% unless collection_handles contains 'coming-soon' %}
+      {% include 'product-notify-me' %}
+      {% include 'product-form', show_payment_button_quickshop: settings.show_payment_button %}
+    {% endunless %}
+</div>

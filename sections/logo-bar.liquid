@@ -1,0 +1,140 @@
+{% comment %}
+** Logos - homepage partial **
+- Draggable section
+- Uses blocks
+{% endcomment %}
+
+{% assign default = '1400x' %}
+{% assign size1 = '480x' %}
+{% assign size2 = '765x' %}
+{% assign size3 = '900x' %}
+{% assign size4 = '1000x' %}
+{% assign size5 = '1100x' %}
+{% assign size6 = '1300x' %}
+{% assign size7 = '1500x' %}
+{% assign size8 = '1700x' %}
+{% assign size9 = '1900x' %}
+{% assign size10 = '2000x' %}
+
+<div class="logo-bar-section container">
+  <div class="sixteen columns">
+    <div class="section clearfix">
+    {% if section.settings.title != blank %}
+        <h2 class="title center">{{ section.settings.title | escape }}</h2>
+        <div class="feature_divider no-margin"></div>
+    {% endif %}
+
+    {% if section.blocks.size > 0 %}
+      <div class="logo-bar">
+        {% for block in section.blocks %}
+          <div class="logo-bar__item" {{ block.shopify_attributes }}>
+            {% if block.settings.link != blank %}
+              <a href="{{ block.settings.link }}" class="logo-bar__link">
+            {% endif %}
+            {% if block.settings.image != blank %}
+              <img  src="{{ block.settings.image | img_url: '100x' }}"
+                alt="{{ block.settings.image.alt | escape }}"
+                class="lazyload {{ settings.image_loading_style }}"
+                style="max-width: {{- block.settings.image.width -}}px;"
+                data-sizes="auto"
+                data-src="{{ block.settings.image | img_url: default }}"
+                data-srcset="
+                {{ block.settings.image | img_url: default }} {{default | replace: 'x', 'w'}},
+                {{ block.settings.image | img_url: size1 }} {{size1 | replace: 'x', 'w'}},
+                {{ block.settings.image | img_url: size2 }} {{size2 | replace: 'x', 'w'}},
+                {{ block.settings.image | img_url: size3 }} {{size3 | replace: 'x', 'w'}},
+                {{ block.settings.image | img_url: size4 }} {{size4 | replace: 'x', 'w'}},
+                {{ block.settings.image | img_url: size5 }} {{size5 | replace: 'x', 'w'}},
+                {{ block.settings.image | img_url: size6 }} {{size6 | replace: 'x', 'w'}},
+                {{ block.settings.image | img_url: size7 }} {{size7 | replace: 'x', 'w'}},
+                {{ block.settings.image | img_url: size8 }} {{size8 | replace: 'x', 'w'}},
+                {{ block.settings.image | img_url: size9 }} {{size9 | replace: 'x', 'w'}},
+                {{ block.settings.image | img_url: size10 }} {{size10 | replace: 'x', 'w'}}"
+                 />
+            {% else %}
+              {{ 'logo' | placeholder_svg_tag: 'placeholder-svg' }}
+            {% endif %}
+            {% if block.settings.link != blank %}
+              </a>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    </div>
+  </div>
+</div>
+
+<style>
+  
+  {% if section.settings.background_color != blank %}
+  
+  #shopify-section-{{ section.id }} {
+    background-color: {{ section.settings.background_color }};
+  }
+  
+  {% endif %}
+  
+</style>
+
+
+{% schema %}
+  {
+    "name": "Logo list",
+    "class": "logo-list-section",
+    "max_blocks": 20,
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "Logo list"
+      },
+	{
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color"
+    }
+    ],
+    "blocks": [
+      {
+        "type": "logo_image",
+        "name": "Logo",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image",
+            "info": "400 x 300px recommended"
+          },
+          {
+            "type": "url",
+            "id": "link",
+            "label": "Link"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Logo list",
+        "category": "Image",
+        "blocks": [
+          {
+            "type": "logo_image"
+          },
+          {
+            "type": "logo_image"
+          },
+          {
+            "type": "logo_image"
+          },
+          {
+            "type": "logo_image"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

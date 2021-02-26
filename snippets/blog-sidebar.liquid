@@ -1,0 +1,148 @@
+{% if section.blocks.size > 0 %}
+  <div class="sidebar four columns medium-down--one-whole">
+    <div class="sidebar_content toggle-all--{{ section.settings.toggle }}">
+      {% for block in section.blocks %}
+        <div class="sidebar-block" {{ block.shopify_attributes }}>
+          {% if block.type == 'menu' %}
+            {% assign sidebar_menu = linklists[block.settings.custom_menu_linklist] %}
+            {% if sidebar_menu != blank %}
+              <h4 class="toggle">{{ sidebar_menu.title }}<span class="right icon-down-arrow"></span></h4>
+              <ul class="toggle_list">
+                {% for link in sidebar_menu.links %}
+                  {% if link.active %}
+                    {% assign active_link = true %}
+                  {% else %}
+                    {% assign active_link = false %}
+                    {% for sub_link in linklists[link.handle].links %}
+                      {% if sub_link.active %}
+                        {% assign active_link = true %}
+                      {% else %}
+                        {% for sub_sub_link in linklists[sub_link.handle].links %}
+                          {% if sub_sub_link.active %}
+                            {% assign active_link = true %}
+                          {% endif %}
+                        {% endfor %}
+                      {% endif %}
+                    {% endfor %}
+                  {% endif %}
+
+                  <li>
+                    {% if link.url == 'http://' or link.url == '' or link.url == '/' or link.url == 'https://' or link.url == '#' %}
+                     <a data-no-instant href="{{ link.url }}" class="{% if link.active %}active{% endif %} parent-link--false">
+                        {{ link.title }}
+                      </a>
+                    {% else %}
+                     <a data-no-instant href="{{ link.url }}" class="{% if link.active %}active{% endif %} parent-link--true">
+                       {{ link.title }}
+                     </a>
+                    {% endif %}
+
+                    {% if linklists[link.handle].links != blank %}
+                      <span class="menu-toggle icon-down-arrow {% if active_link %}active{% endif %}" aria-haspopup="true" aria-expanded="{% if active_link %}true{% else %}false{% endif %}"> </span>
+
+                      <ul class="{% if active_link %}active{% endif %}">
+                        {% for sub_link in linklists[link.handle].links %}
+                          {% if sub_link.active %}
+                            {% assign active_link = true %}
+                          {% else %}
+                            {% assign active_link = false %}
+                            {% for sub_sub_link in linklists[sub_link.handle].links %}
+                              {% if sub_sub_link.active %}
+                                {% assign active_link = true %}
+                              {% endif %}
+                            {% endfor %}
+                          {% endif %}
+
+                          <li class="sub-menu {% if active_link %}active{% endif %}">
+                            <a {% if sub_link.active %}class="active"{% endif %} href="{{ sub_link.url }}">{{ sub_link.title }}</a>
+
+                            {% if linklists[sub_link.handle].links != blank %}
+                              <span class="menu-toggle icon-down-arrow {% if active_link %}active{% endif %}" aria-haspopup="true" aria-expanded="{% if active_link %}true{% else %}false{% endif %}"> </span>
+
+                              <ul class="{% if active_link %}active{% endif %}">
+                                {% for sub_sub_link in linklists[sub_link.handle].links %}
+                                  <li class="sub-menu">
+                                    <a {% if sub_sub_link.active %}class="active"{% endif %} href="{{ sub_sub_link.url }}">{{ sub_sub_link.title }}</a>
+                                  </li>
+                                {% endfor %}
+                              </ul>
+                            {% endif %}
+                          </li>
+                        {% endfor %}
+                      </ul>
+                    {% endif %}
+                  </li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <h4 class="toggle">Menu title<span class="right icon-down-arrow"></span></h4>
+              <ul class="toggle_list">
+                <li><p>{{ 'homepage.onboarding.no_content' | t }}</p></li>
+              </ul>
+            {% endif %}
+
+          {% elsif block.type == 'search' %}
+            <form class="blog_search" action="/search">
+              <input type="hidden" name="type" value="article" />
+              <span class="icon-search search-submit"></span>
+              <input type="text" name="q" class="search_box" placeholder="{{ 'general.search.title' | t }} {{ blog.title | escape }}..." autocapitalize="off" autocomplete="off" autocorrect="off" value="{{ search.terms }}" />
+            </form>
+
+          {% elsif block.type == 'newsletter' %}
+            {% if block.settings.newsletter_title != blank %}
+              <h4 class="newsletter-block__title">{{ block.settings.newsletter_title }}</h4>
+            {% endif %}
+            {% if block.settings.newsletter_text != blank %}
+              <div class="newsletter-block__text">{{ block.settings.newsletter_text }}</div>
+            {% endif %}
+            {% include 'newsletter-form' %}
+
+          {% elsif block.type == 'recent_posts' %}
+            <h4 class="toggle">{{ 'blogs.sidebar.recent_articles' | t }}<span class="right icon-down-arrow"></span></h4>
+            <ul class="toggle_list">
+              {% for article in blogs[blog_handle].articles limit: block.settings.blog_post_count %}
+                <li>
+                  <a href="{{ article.url }}" title="{{ article.title | escape }}">{{ article.title }}</a>
+                  {% if settings.blog_date %}
+                    <div class="meta">
+                      <span class="label">{{ article.published_at | date: format: "month_day_year" }}</span>
+                    </div>
+                  {% endif %}
+                </li>
+              {% endfor %}
+            </ul>
+
+          {% elsif block.type == 'post_tags'  %}
+            <h4 class="toggle">{{ 'blogs.sidebar.categories' | t }}<span class="right icon-down-arrow"></span></h4>
+            <ul class="toggle_list">
+              {% for tag in blogs[blog_handle].all_tags %}
+                <li>
+                  <a href="{{ shop.url}}/blogs/{{ blogs[blog_handle].handle }}/tagged/{{ tag | handleize }}" title="{{ blogs[blog_handle].title }} {{ 'blogs.general.tagged' | t }} {{ tag | escape }}">{{ tag }}</a>
+                </li>
+              {% endfor %}
+            </ul>
+
+          {% elsif block.type == 'page' %}
+            {% if block.settings.content_page != blank %}
+              <h4 class="toggle">{{ pages[block.settings.content_page].title }}<span class="right icon-down-arrow"></h4>
+              <ul class="toggle_list content_block">
+                <li>{{ pages[block.settings.content_page].content }}</li>
+              </ul>
+            {% else %}
+              <h4 class="toggle">Page title<span class="right icon-down-arrow"></span></h4>
+              <ul class="toggle_list">
+                <li><p>{{ 'homepage.onboarding.no_content' | t }}</p></li>
+              </ul>
+            {% endif %}
+
+          {% elsif block.type == 'text' %}
+            <h4 class="toggle">{{ block.settings.title }}<span class="right icon-down-arrow"></span></h4>
+            <ul class="toggle_list content_block">
+              <li>{{ block.settings.text }}</li>
+            </ul>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endif %}

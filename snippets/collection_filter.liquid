@@ -1,0 +1,281 @@
+{% if featured %}
+  {% assign collection = collections[featured_collection] %}
+{% endif %}
+
+{% if section.blocks.size > 0 %}
+  <div class="collection_filter_page sidebar four columns toggle-all--{{ section.settings.toggle }} medium-down--one-whole">  
+    <div class="container">
+    <div class="sidebar-wrap">
+      {% for block in section.blocks %}
+        <div class="sidebar-block" {{ block.shopify_attributes }}>
+          {% if block.type == 'menu' %}
+            {% assign sidebar_menu = linklists[block.settings.custom_menu_linklist] %}
+            {% if sidebar_menu != blank %}
+              <h4 class="toggle">{{ sidebar_menu.title }}<span class="right icon-down-arrow"></span></h4>
+              <ul class="toggle_list">
+                {% for link in sidebar_menu.links %}
+                  {% if link.active %}
+                    {% assign active_link = true %}
+                  {% else %}
+                    {% assign active_link = false %}
+                    {% for sub_link in linklists[link.handle].links %}
+                      {% if sub_link.active %}
+                        {% assign active_link = true %}
+                      {% else %}
+                        {% for sub_sub_link in linklists[sub_link.handle].links %}
+                          {% if sub_sub_link.active %}
+                            {% assign active_link = true %}
+                          {% endif %}
+                        {% endfor %}
+                      {% endif %}
+                    {% endfor %}
+                  {% endif %}
+
+                  <li>
+                    {% if link.url == 'http://' or link.url == '' or link.url == '/' or link.url == 'https://' or link.url == '#' %}
+                     <a data-no-instant href="{{ link.url }}" class="{% if link.active %}active{% endif %} parent-link--false">
+                        {{ link.title }}
+                      </a>
+                    {% else %}
+                     <a data-no-instant href="{{ link.url }}" class="{% if link.active %}active{% endif %} parent-link--true">
+                       {{ link.title }}
+                     </a>
+                    {% endif %}
+
+                    {% if linklists[link.handle].links != blank %}
+                      <span class="menu-toggle icon-down-arrow {% if active_link %}active{% endif %}" aria-haspopup="true" aria-expanded="{% if active_link %}true{% else %}false{% endif %}"> </span>
+
+                      <ul class="{% if active_link %}active{% endif %}">
+                        {% for sub_link in linklists[link.handle].links %}
+                          {% if sub_link.active %}
+                            {% assign active_link = true %}
+                          {% else %}
+                            {% assign active_link = false %}
+                            {% for sub_sub_link in linklists[sub_link.handle].links %}
+                              {% if sub_sub_link.active %}
+                                {% assign active_link = true %}
+                              {% endif %}
+                            {% endfor %}
+                          {% endif %}
+
+                          <li class="sub-menu {% if active_link %}active{% endif %}">
+                            <a {% if sub_link.active %}class="active"{% endif %} href="{{ sub_link.url }}">{{ sub_link.title }}</a>
+
+                            {% if linklists[sub_link.handle].links != blank %}
+                              <span class="menu-toggle icon-down-arrow {% if active_link %}active{% endif %}" aria-haspopup="true" aria-expanded="{% if active_link %}true{% else %}false{% endif %}"> </span>
+
+                              <ul class="{% if active_link %}active{% endif %}">
+                                {% for sub_sub_link in linklists[sub_link.handle].links %}
+                                  <li class="sub-menu">
+                                    <a {% if sub_sub_link.active %}class="active"{% endif %} href="{{ sub_sub_link.url }}">{{ sub_sub_link.title }}</a>
+                                  </li>
+                                {% endfor %}
+                              </ul>
+                            {% endif %}
+                          </li>
+                        {% endfor %}
+                      </ul>
+                    {% endif %}
+                  </li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <h4 class="toggle">Menu title<span class="right icon-down-arrow"></span></h4>
+              <ul class="toggle_list">
+                <li><p>{{ 'homepage.onboarding.no_content' | t }}</p></li>
+              </ul>
+            {% endif %}
+
+          {% elsif block.type == 'page' %}
+            {% if block.settings.content_page != blank %}
+              <h4 class="toggle">{{ pages[block.settings.content_page].title }}
+                
+                <span class="right icon-down-arrow"></span></h4>
+              <ul class="toggle_list content_block">
+                <li>{{ pages[block.settings.content_page].content }}</li>
+              </ul>
+            {% else %}
+              <h4 class="toggle">Page title<span class="right icon-down-arrow"></span></h4>
+              <ul class="toggle_list">
+                <li><p>{{ 'homepage.onboarding.no_content' | t }}</p></li>
+              </ul>
+            {% endif %}
+
+          {% elsif block.type == 'filter_by_tag' %}
+            {% if template contains 'product' %}
+              {% assign tag_count = product.tags | size %}
+              {% if tag_count > 0 %}
+                <h4 class="toggle">{{ 'collections.sidebar.tags' | t }}
+                  
+                  <span class="right icon-down-arrow"></span></h4>
+                <ul class="toggle_list">
+                  {% for tag in product.tags %}
+                    {% unless tag contains 'meta-' %}
+                      <li>
+                        <a {% if current_tags contains tag %}class="active"{% endif %} href="/collections/{% if collection.handle != blank %}{{ collection.handle }}{% else %}all{% endif %}/{{ tag | handleize }}">{{ tag }}</a>
+                      </li>
+                    {% endunless %}
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            {% else %}
+              {% assign tag_count = collection.all_tags | size %}
+              {% if tag_count > 0 %}
+                <h4 class="toggle">{{ 'collections.sidebar.tags' | t }}
+                  
+                  <span class="right icon-down-arrow"></span></h4>
+                <ul class="toggle_list">
+                  <li>
+                    <a {% unless current_tags %}class="active--default"{% endunless %} href="{% if collection.handle == "all" %}/collections/all{% else %}{{ collection.url }}{% endif %}">All {{ collection.title }}</a>
+                  </li>
+                  {% for tag in collection.all_tags %}
+                    {% unless tag contains 'meta-' %}
+                      <li>
+                        <a {% if current_tags contains tag %}class="active"{% endif %} href="/collections/{% if collection.handle != blank %}{{ collection.handle }}{% else %}all{% endif %}/{{ tag | handleize }}">{{ tag }}</a>
+                      </li>
+                    {% endunless %}
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            {% endif %}
+
+          {% elsif block.type == 'filter_by_type' %}
+            <h4 class="toggle">{{ 'collections.sidebar.product_types' | t }}
+              
+              <span class="right icon-down-arrow"></span></h4>
+            <ul class="toggle_list">
+              {% for product_type in shop.types %}
+                <li {% if product_type == collection.title %}class="active"{% endif %}>{{ product_type | link_to_type }}</li>
+              {% endfor %}
+            </ul>
+
+          {% elsif block.type == 'filter_by_collection' %}
+            <h4 class="toggle">{{ 'collections.sidebar.collections' | t }}<span class="right icon-down-arrow"></span></h4>
+            <ul class="toggle_list">
+              {% for col in collections %}
+                {% unless col.handle == 'frontpage' %}
+                  <li {% if col.handle == collection.handle %}class="active"{% endif %}><a href="{{ col.url }}" title="{{ col.title | escape }}">{{ col.title }}</a></li>
+                {% endunless %}
+              {% endfor %}
+            </ul>
+
+          {% elsif block.type == 'filter_by_vendor' %}
+            <h4 class="toggle">{{ 'collections.sidebar.vendors' | t }}<span class="right icon-down-arrow"></span></h4>
+            <ul class="toggle_list">
+              {% for product_vendor in shop.vendors %}
+                <li {% if product_vendor == collection.title %}class="active"{% endif %}>{{ product_vendor | link_to_vendor }}</li>
+              {% endfor %}
+            </ul>
+
+          {% elsif block.type == 'filter' %}
+            {% assign initial_filter_tags = block.settings.filter_tags | split: ',' %}
+            {% assign filter_name = block.settings.filter_name | replace: ' ', '_' | downcase | append: '__' %}
+
+            {% capture filter_tags %}{% for filter_tag in initial_filter_tags %}{{- filter_name | strip }}{{ filter_tag | strip -}}{% if forloop.last == false %}^{% endif %}{% endfor %}{% endcapture %}
+            {% assign filter_tags = filter_tags | split: "^" %}
+
+            {%- capture headlines -%}
+              {%- for collection_tag in collection.all_tags -%}
+                {%- for tag in filter_tags -%}
+                  {%- capture formatted_tag -%}{{- tag | replace: filter_name, '' | downcase -}}{%- endcapture -%}
+                  {%- capture formatted_collection_tag -%}{{- collection_tag | downcase -}}{%- endcapture -%}
+                  {%- if formatted_tag == formatted_collection_tag -%}
+                    {{ block.settings.filter_name }}{% if forloop.last == false %}^{% endif %}
+                  {%- endif -%}
+                {%- endfor -%}
+              {%- endfor -%}
+            {%- endcapture -%}
+
+            {% assign headline_length = headlines | split: '^' | size %}
+
+            {% if headline_length > 0 %}
+
+              <div class="sidebar__collection-filter">
+
+                <h4 class="toggle">{{ block.settings.filter_name }}<span class="right icon-down-arrow"></span></h4>
+
+                {% if block.settings.filter_name != blank and headline_length > 0 %}
+                  <ul class="toggle_list" >
+                    <div class="filter-all-tags color-filter--{{ block.settings.enable_filter_swatches }}">
+                      {% for tag in filter_tags %}
+                        {% for collection_tag in collection.all_tags %}
+                          {% capture formatted_tag %}{{- tag | replace: filter_name, '' | downcase -}}{% endcapture %}
+                          {% capture formatted_collection_tag %}{{ collection_tag | downcase }}{% endcapture %}
+
+                          {% if formatted_tag == formatted_collection_tag %}
+                            {% if block.settings.enable_filter_swatches %}
+                              <li>
+                                <label data-option-filter><input type="checkbox" value="{{- tag | replace: filter_name, '' | handleize -}}" name="{{tag | handleize }}" id="{{tag}}" class="styled-checkbox" style="background-image: url({{ tag | replace: filter_name, ''| handleize | downcase | append: '.png' | asset_img_url: '50x' }}); background-color: {{tag | replace: filter_name, '' | downcase }}">
+                                    {{tag | replace: filter_name, '' | replace: '_', ' ' }}
+                                </label>
+                              </li>
+                            {% else %}
+                              <li>
+                                <a>
+                                  <label data-option-filter><input type="checkbox" value="{{- tag | replace: filter_name, '' | handleize -}}" name="{{tag | handleize }}" >
+                                    {{tag | replace: filter_name, '' | replace: '_', ' ' }}
+                                  </label>
+                                </a>
+                              </li>
+                            {% endif %}
+                          {% endif %}
+                        {% endfor %}
+                      {% endfor %}
+                    </div>
+                    <div class="filter-active-tag color-filter--{{ block.settings.enable_filter_swatches }}">
+                      {% for tag in filter_tags %}
+                        {% for current_tag in current_tags %}
+                          {% capture formatted_tag %}{{- tag | replace: filter_name, '' | downcase | handleize -}}{% endcapture %}
+                          {% capture formatted_current_tag %}{{ current_tag | downcase | handleize }}{% endcapture %}
+                          {% if formatted_tag == formatted_current_tag %}
+                            {% if block.settings.enable_filter_swatches %}
+                              <li>
+                                <label data-option-filter>
+                                  <input checked type="checkbox" value="{{- tag | replace: filter_name, '' | handleize -}}" name="{{tag | handleize }}" id="{{tag}}" class="styled-checkbox" style="background-image: url({{ tag | replace: filter_name, '' | handleize | downcase | append: '.png' | asset_img_url: '50x' }}); background-color: {{tag | replace: filter_name, '' | downcase }}">
+                                  {{tag | replace: filter_name, '' | replace: '_', ' ' }}
+                                </label>
+                              </li>
+                            {% else %}
+                              <li>
+                                <a class="active">
+                                  <label data-option-filter><input checked type="checkbox" value="{{- tag | replace: filter_name, '' | handleize -}}" name="{{tag}}" >
+                                    {{tag | replace: filter_name, '' | replace: '_', ' ' }}
+                                  </label>
+                                </a>
+                              </li>
+                            {% endif %}
+                            <button class="clear-active-filter" data-clear-filter>
+                            <i class="x-icon"></i>{{ 'collections.sidebar.clear' | t }}</button>
+                            {% break %}
+                          {% endif %}
+                        {% endfor %}
+                      {% endfor %}
+                    </div>
+                  </ul>
+                {% endif %}
+              </div>
+            {% endif %}
+
+          {% elsif block.type == 'text' %}
+            <h4 class="toggle">{{ block.settings.title }}<span class="right icon-down-arrow"></span></h4>
+            <ul class="toggle_list content_block">
+              <li>{{ block.settings.text }}</li>
+            </ul>
+          {% elsif block.type == 'recently_viewed'%}
+            <div  class="js-sidebar-recently-viewed hidden"
+                  data-rv-handle="{{ product.handle }}"
+                  data-visible-products="{{ block.settings.sidebar_rv_per | plus: 1 }}"
+            >
+              <h4 class="toggle">{{ block.settings.sidebar_rv_title }}<span class="right icon-down-arrow"></span></h4>
+              <ul class="toggle_list">
+                <li>{% include 'sidebar-recently-viewed' %}</li>
+              </ul>
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+    </div>
+     </div>
+ 
+{% endif %}

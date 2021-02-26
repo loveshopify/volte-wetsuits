@@ -1,0 +1,32 @@
+{% assign collection_handles = product.collections | map: 'handle' %}
+<div class="thumbnail-overlay">
+  <a href="{{ product.url | within: collection }}" itemprop="url" class="hidden-product-link">{{ product.title }}</a>
+  <div class="info">
+   
+    <div class="available_size">
+      <p>Available Sizes</p>
+      {% include "quick-product-swatch-hover" | product %}
+    </div>
+    {% if settings.thumbnail_hover_enabled and settings.quick_shop_enabled %}
+      {% include "product-info" %}
+      {% include 'quick-shop-button' %}
+    {% elsif settings.thumbnail_hover_enabled %}
+      {% include "product-info" %}
+    {% elsif settings.quick_shop_enabled %}
+      {% include 'quick-shop-button' %}
+    {% endif %}
+  </div>
+</div>
+<div class="banner_holder">
+  {% if product.available %}
+    {% if settings.sale_banner_enabled and product.compare_at_price_max > product.price %}
+      <div class="sale_banner thumbnail_banner">{{ 'collections.general.sale' | t }}</div>
+    {% endif %}
+  {% endif %}
+  {% if collection_handles contains 'new' %}
+    <div class="new_banner thumbnail_banner">{{ 'collections.general.new' | t }}</div>
+  {% endif %}
+  {% if collection_handles contains 'pre-order' %}
+    <div class="preorder_banner thumbnail_banner">{{ 'collections.general.pre_order' | t }}</div>
+  {% endif %}
+</div>

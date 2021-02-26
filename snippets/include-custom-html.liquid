@@ -1,0 +1,21 @@
+{% if type == 'block' %}
+  {% assign custom_html = block.settings.custom_html %}
+{% else %}
+  {% assign custom_html = section.settings.custom_html %}
+{% endif %}
+
+<div class="homepage_content clearfix">
+  <div class="container">
+    <div class="sixteen columns">
+      <div class="section clearfix">
+        {% if custom_html != blank %}
+         {{ custom_html }}
+        {% else %}
+          <p class="center">
+            {{ 'homepage.onboarding.no_content' | t }}
+          </p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>

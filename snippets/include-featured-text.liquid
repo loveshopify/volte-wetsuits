@@ -1,0 +1,67 @@
+{% if type == 'block' %}
+  {% assign image = block.settings.image %}
+  {% assign title = block.settings.title %}
+  {% assign content = block.settings.content %}
+  {% assign text_size = block.settings.text_size %}
+  {% assign text_alignment = block.settings.text_alignment %}
+  {% assign button_label = block.settings.button_label %}
+  {% assign button_link = block.settings.button_link %}
+{% else %}
+  {% assign image = section.settings.image %}
+  {% assign title = section.settings.title %}
+  {% assign content = section.settings.content %}
+  {% assign text_size = section.settings.text_size %}
+  {% assign text_alignment = section.settings.text_alignment %}
+  {% assign button_label = section.settings.button_label %}
+  {% assign button_link = section.settings.button_link %}
+{% endif %}
+
+<div class="container">
+  <div class="sixteen columns">
+    <div class="homepage_content section {{ text_alignment }} clearfix">
+      {% if image %}
+        <img  src="{{ image.src | img_url: '100x' }}"
+              class="lazyload {{ settings.image_loading_style }}"
+              alt="{{ image.alt }}"
+              style="max-width: {{- image.width -}}px;"
+              data-sizes="auto"
+              data-src="{{ image | img_url: '2048x' }}"
+              data-srcset=" {{ image | img_url: '2048x' }} 2048w,
+                            {{ image | img_url: '1600x' }} 1600w,
+                            {{ image | img_url: '1200x' }} 1200w,
+                            {{ image | img_url: '1000x' }} 1000w,
+                            {{ image | img_url: '800x' }} 800w,
+                            {{ image | img_url: '600x' }} 600w,
+                            {{ image | img_url: '400x' }} 400w"
+              />
+      {% endif %}
+
+      {% if title != blank %}
+        <h2 class="title">
+          {{ title }}
+        </h2>
+        <div class="feature_divider"></div>
+      {% endif %}
+
+      <div class="{{ text_size }}">
+        {% if content != blank %}
+          {{ content }}
+        {% endif %}
+
+        {% if button_label != blank %}
+          <a href="{{ button_link }}" class="action_button">
+            {{ button_label }}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  @media only screen and (max-width: 798px) {
+    .featured_text {
+      text-align: {{ text_alignment }};
+    }
+  }
+</style>

@@ -1,0 +1,65 @@
+<div class="
+  {% if products_per_row == 2 %}
+    eight columns
+  {% elsif products_per_row == 3 %}
+    one-third column
+  {% elsif products_per_row == 4 %}
+    four columns
+  {% elsif products_per_row == 5 %}
+    one-fifth column
+  {% elsif products_per_row == 6 %}
+    one-sixth column
+  {% else %}
+    one-seventh column
+  {% endif %}
+  {% if settings.mobile_products_per_row == '1' %}
+    medium-down--one-half
+    small-down--one-whole
+  {% else %}
+    medium-down--one-half
+    small-down--one-half
+  {% endif %}
+  thumbnail {% cycle collection_group_mobile: 'even', 'odd' %}">
+
+  {% assign collection_handles = product.collections | map: 'handle' %}
+  {% if product.featured_image.alt contains 'youtube' or image.alt contains 'vimeo' %}
+    {% assign alt_text = product.title %}
+  {% else %}
+    {% assign alt_text = product.featured_image.alt %}
+  {% endif %}
+
+  <div class="product-wrap">
+    <div class="relative product_image swap-{{ settings.collection_secondary_image }}">
+      <a href="{{ product.url | within: collection }}" itemprop="url">
+        <div class="image__container">
+          <img  src="{{ product.featured_image | product_img_url: '100x' }}"
+                alt="{{ alt_text | escape }}"
+                class="lazyload {{ settings.image_loading_style }}"
+                data-sizes="auto"
+                data-src="{{ product.featured_image | product_img_url: '900x' }}"
+                data-srcset=" {{ product.featured_image | product_img_url: '300x' }} 300w,
+                              {{ product.featured_image | product_img_url: '400x' }} 400w,
+                              {{ product.featured_image | product_img_url: '500x' }} 500w,
+                              {{ product.featured_image | product_img_url: '600x' }} 600w,
+                              {{ product.featured_image | product_img_url: '700x' }} 700w,
+                              {{ product.featured_image | product_img_url: '800x' }} 800w,
+                              {{ product.featured_image | product_img_url: '900x' }} 900w"
+              />
+            </div>
+          {% if settings.collection_secondary_image != blank %}
+            <div class="image__container" style="max-width: {% if product.images[1] != blank %}{{- product.images[1].width -}}px{% else %}{{- product.featured_image.width -}}px{% endif %}; ">
+              <img src="{% if product.images[1] != blank %}{{ product.images[1] | product_img_url: '900x' }}{% else %}{{ product.featured_image | product_img_url: '900x' }}{% endif %}"
+              class="secondary lazyload"
+              alt="{{ alt_text | escape }}"
+              />
+            </div>
+          {% endif %}
+        </a>
+      {% include "product-details" %}
+    </div>
+    <a class="product-info__caption {% if settings.thumbnail_hover_enabled %}hidden{% endif %}" href="{{ product.url | within: collection }}" itemprop="url">
+      {% include "product-info" %}
+    </a>
+  </div>
+  {% include 'collection-swatch' %}
+</div>

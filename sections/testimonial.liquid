@@ -1,0 +1,246 @@
+{% comment %}
+** Testimonial - homepage partial **
+- Draggable section
+- Uses blocks
+{% endcomment %}
+
+{% assign default = '1400x' %}
+{% assign size1 = '480x' %}
+{% assign size2 = '765x' %}
+{% assign size3 = '900x' %}
+{% assign size4 = '1000x' %}
+{% assign size5 = '1100x' %}
+{% assign size6 = '1300x' %}
+{% assign size7 = '1500x' %}
+{% assign size8 = '1700x' %}
+{% assign size9 = '1900x' %}
+{% assign size10 = '2000x' %}
+
+{% if section.settings.wide_display == false %}
+<div class="container">
+  <div class="sixteen columns">
+{% endif %}
+
+{% if section.blocks.size > 0 %}
+  <div  id="testimonial-{{section.id}}"
+        class="testimonial-slideshow
+        js-testimonial
+        {% if section.settings.testimonial_text_animation != '' %}text-animation--true{% endif %}
+        transparentBackground--{{settings.slideshow_button_style}}
+        full-width--{{ section.settings.wide_display }}"
+        data-slider-id="testimonial-{{section.id}}"
+        data-slideshow-speed="{{section.settings.testimonial_speed}}"
+        data-slideshow-text-animation="{{section.settings.testimonial_text_animation}}"
+        >
+    {% for block in section.blocks %}
+        <div class="testimonial-block gallery-cell slide-{{ forloop.index }} {% if block.settings.image == nil %}set-static use-mobile-color{% endif %}" {{ block.shopify_attributes }} data-block-id="{{block.id}}">
+            {% if block.settings.image != nil %}
+
+              <img  src="{{ block.settings.image | img_url: '100x', format: 'pjpg' }}"
+                    alt="{{ block.settings.image.alt | escape }}"
+                    class="testimonial-image lazyload js-image-loaded {{ settings.image_loading_style }}"
+                    sizes="100vw"
+                    data-src="{{ block.settings.image | img_url: default, format: 'pjpg' }}"
+                    srcset="
+                    {{ block.settings.image | img_url: default, format: 'pjpg' }} {{default | replace: 'x', 'w'}},
+                    {{ block.settings.image | img_url: size1, format: 'pjpg' }} {{size1 | replace: 'x', 'w'}},
+                    {{ block.settings.image | img_url: size2, format: 'pjpg' }} {{size2 | replace: 'x', 'w'}},
+                    {{ block.settings.image | img_url: size3, format: 'pjpg' }} {{size3 | replace: 'x', 'w'}},
+                    {{ block.settings.image | img_url: size4, format: 'pjpg' }} {{size4 | replace: 'x', 'w'}},
+                    {{ block.settings.image | img_url: size5, format: 'pjpg' }} {{size5 | replace: 'x', 'w'}},
+                    {{ block.settings.image | img_url: size6, format: 'pjpg' }} {{size6 | replace: 'x', 'w'}},
+                    {{ block.settings.image | img_url: size7, format: 'pjpg' }} {{size7 | replace: 'x', 'w'}},
+                    {{ block.settings.image | img_url: size8, format: 'pjpg' }} {{size8 | replace: 'x', 'w'}},
+                    {{ block.settings.image | img_url: size9, format: 'pjpg' }} {{size9 | replace: 'x', 'w'}},
+                    {{ block.settings.image | img_url: size10, format: 'pjpg' }} {{size10 | replace: 'x', 'w'}}"
+                      />
+              {% if block.settings.darken_bg %}<div class="darken-bg"></div>{% endif %}
+            {% endif %}
+            <div class="caption position-{{block.settings.text_position}} js-caption {% unless block.settings.enable_image == false %}no-white-bg{% endunless %}">
+                <div class="caption-content testimonial-text align-{{block.settings.text_align}}">
+                  {% if block.settings.title != blank %}
+                    <p class="headline">
+                      {{ block.settings.title }}
+                    </p>
+                    <div class="feature_divider"></div>
+                  {% endif %}
+                  <div class="subtitle">
+                    {{ block.settings.testimonial }}
+                    <p>
+                      {% if block.settings.name != blank %}
+                        {{ block.settings.name }}<br>
+                      {% endif %}
+
+                      {% if block.settings.store_name != blank %}
+                        {% if block.settings.link != blank %}<a href="{{ block.settings.link }}">{% endif %}
+                          <strong>{{ block.settings.store_name }}</strong>
+                        {% if block.settings.link != blank %}</a>{% endif %}
+                      {% endif %}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+        </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+{% if section.settings.wide_display == false %}
+  </div>
+</div>
+{% endif %}
+
+{% schema %}
+
+{
+  "name": "Testimonials",
+  "class": "testimonial-section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "wide_display",
+      "label": "Wide display",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "testimonial_text_animation",
+      "label": "Text animation",
+      "options": [
+        {
+          "value": "",
+          "label": "None"
+        },
+        {
+          "value": "fadeIn",
+          "label": "Fade In"
+        },
+        {
+          "value": "fadeInUp",
+          "label": "Fade Up"
+        },
+        {
+          "value": "fadeInDown",
+          "label": "Fade Down"
+        }
+      ],
+      "default": "fadeInDown"
+    },
+    {
+      "type": "range",
+      "id": "testimonial_speed",
+      "label": "Change testimonials every",
+      "min": 0,
+      "max": 12,
+      "step": 1,
+      "default": 6,
+      "unit": "sec"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "image",
+      "name": "Image",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "info": "1600 x 1000px recommended"
+        },
+        {
+          "type": "checkbox",
+          "id": "darken_bg",
+          "label": "Darken background image"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Testimonial title",
+          "default": "Customer Testimonial"
+        },
+        {
+          "type": "richtext",
+          "id": "testimonial",
+          "label": "Testimonial",
+          "default": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam quam enim, fringilla ut purus ut, pretium ullamcorper sem. In sit amet vestibulum tellus. Aenean gravida dolor eget mi bibendum semper. </p>"
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Customer name"
+        },
+        {
+          "type": "text",
+          "id": "store_name",
+          "label": "Store name"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Store link"
+        },
+        {
+          "type": "select",
+          "id": "text_position",
+          "label": "Text position",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
+          ],
+          "default": "center"
+        },
+        {
+          "type": "select",
+          "id": "text_align",
+          "label": "Text alignment",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
+          ],
+          "default": "center"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Testimonials",
+      "category": "Text",
+      "blocks": [
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        }
+      ]
+    }
+  ]
+}
+
+{% endschema %}

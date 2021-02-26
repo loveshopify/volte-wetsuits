@@ -1,0 +1,233 @@
+{% comment %}
+** Contact page - custom view **
+- Page template
+{% endcomment %}
+
+{% if section.settings.image != nil %}
+  <header class="banner center page_banner dark-overlay-{{ section.settings.image_darken }}">
+    <img  src="{{ section.settings.image | img_url: '100x' }}"
+          alt="{% if section.settings.image.alt != blank %}{{ section.settings.image.alt | escape }}{% else %}{{ page.title | escape }}{% endif %}"
+          class="lazyload {{ settings.image_loading_style }}"
+          data-src="{{ section.settings.image | img_url: '1400x', format: 'pjpg' }}"
+          sizes="100vw"
+          srcset="{{ section.settings.image | img_url: '480x', format: 'pjpg' }} 480w,
+                  {{ section.settings.image | img_url: '765x', format: 'pjpg' }} 765w,
+                  {{ section.settings.image | img_url: '1400x', format: 'pjpg' }} 1400w,
+                  {{ section.settings.image | img_url: '2048x', format: 'pjpg' }} 2048w"
+           />
+    <div class="caption captionOverlay--true contact_caption">
+      <h1 class="headline">{{ section.settings.title }}</h1>
+      <p class="subtitle contact_subtitle">{{ section.settings.subtitle }}</p>
+    </div>
+  </header>
+{% endif %}
+
+<a name="pagecontent" id="pagecontent"></a>
+<div class="contact-pages-full-box">
+  <div class="container main content">
+
+    <div class="ten columns offset-by-three page clearfix equal-columns--outside-trim">
+      {% if section.settings.image == nil %}
+        <h1>{{ page.title }}</h1>
+        <div class="feature_divider"></div>
+      {% endif %}
+
+      {{ page.content }}
+
+      {% form 'contact' %}
+        {% if form.posted_successfully? %}
+          <p class="quote">{{ 'contact.form.post_success' | t }}</p>
+        {% endif %}
+
+        {% if form.errors %}
+          <p class="quote">{{ 'general.forms.post_error' | t }}</p>
+
+         {% assign message = 'contact.form.message' | t %}
+          <ul class="center">
+            {% for field in form.errors %}
+              {% if field == 'form' %}
+                <li>
+                  {{ form.errors.messages[field] }}
+                </li>
+              {% else %}
+                <li>
+                  {% assign field_name = field | replace: 'body', message %}
+                  {{ 'general.forms.post_field_error_html' | t: field: field_name, error: form.errors.messages[field] }}
+                </li>
+              {% endif %}
+            {% endfor %}
+           </ul>
+        {% endif %}
+
+         <br class="clear" />
+         <div class="eight columns alpha">
+          {% assign name_attr = 'contact.form.name' | handle %}
+          <label for="contactFormName">{{ 'contact.form.name' | t }} <span class="red">*</span></label>
+          <input type="text" id="contactFormName" name="contact[{{ name_attr }}]" placeholder="{{ 'contact.form.s_name' | t }}" autocapitalize="words" value="{% if form[name_attr] %}{{ form[name_attr] }}{% elsif customer %}{{ customer.name }}{% endif %}" required="required">
+         </div>
+         <div class="eight columns omega">
+          <label for="contactFormEmail">{{ 'contact.form.email' | t }} <span class="red">*</span></label>
+          <input type="email" id="contactFormEmail" name="contact[email]" placeholder="{{ 'contact.form.s_email' | t }}" autocorrect="off" autocapitalize="off" value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}" required="required">
+         </div>
+         
+          {% assign name_attr = 'contact.form.phone' | t | handle %}
+          <label for="contactFormPhone" class="hidden-label">{{ 'contact.form.phone' | t }}</label>
+          <input type="tel" id="contactFormPhone" name="contact[{{ name_attr }}]" placeholder="{{ 'contact.form.s_phone' | t }}" pattern="[0-9\-]*" value="{% if form[name_attr] %}{{ form[name_attr] }}{% elsif customer %}{{ customer.phone }}{% endif %}">
+         
+      	  {% assign name_attr = 'contact.form.messagetitle' | t | handle %}
+      	  <label for="contactFormTitle" class="hidden-label">{{ 'contact.form.messagetitle' | t }}</label>
+          <input type="text" id="contactFormTitle" name="contact[{{ name_attr }}]" placeholder="{{ 'contact.form.s_messagetitle' | t }}" value="{% if form[name_attr] %}{{ form[name_attr] }}{% elsif customer %}{{ customer.messagetitle }}{% endif %}">         
+
+          <label for="contactFormMessage">{{ 'contact.form.message' | t }} </label>
+          <textarea rows="5" id="contactFormMessage" name="contact[body]" placeholder="{{ 'contact.form.s_send' | t }}" >{% if form.body %}{{ form.body }}{% endif %}</textarea>
+
+          {% if section.settings.text %}
+            {{ section.settings.text }}
+          {% endif %}
+
+        <input type="submit" class="submit action_button contact_btn" value="{{ 'contact.form.send' | t }}" />
+      {% endform %}
+    </div>
+  </div> 
+</div>
+{% if section.settings.show_map %}
+  {% include 'include-map' %}
+{% endif %}
+
+{% schema %}
+
+{
+  "name": "Contact",
+  "class": "contact-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Banner image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image",
+      "info": "1800 x 800px recommended"
+    },
+    {
+      "type": "checkbox",
+      "id": "image_darken",
+      "label": "Darken banner image",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Get in touch"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subheading",
+      "default": "Subheading"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+        "type": "header",
+        "content": "Map"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_map",
+      "label": "Show map",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "wide_display",
+      "label": "Wide display",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "map_address",
+      "label": "Address",
+      "info": "Google Maps will find the exact location"
+    },
+    {
+      "type": "range",
+      "id": "map_height",
+      "min": 300,
+      "max": 600,
+      "step": 10,
+      "unit": "px",
+      "label": "Map height",
+      "default": 400
+    },
+    {
+      "type": "range",
+      "id": "zoom_level",
+      "min": 1,
+      "max": 20,
+      "step": 1,
+      "unit": "x",
+      "label": "Map zoom level",
+      "default": 16
+    },
+    {
+      "type": "image_picker",
+      "id": "map_image",
+      "label": "Image",
+      "info": "Displayed when map isn't loaded"
+    },
+    {
+      "type": "header",
+      "content": "API key"
+    },
+    {
+      "type": "text",
+      "id": "api_key",
+      "label": "Google Maps API key",
+      "info": "You’ll need to [register a Google Maps API Key](https://help.shopify.com/manual/using-themes/troubleshooting/map-section-api-key) to display the map"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_pin",
+      "label": "Show pin",
+      "info": "Requires use of API key",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "map_style",
+      "label": "Map color scheme",
+      "options": [
+        {
+          "value": "default",
+          "label": "Default"
+        },
+        {
+          "value": "aubergine",
+          "label": "Aubergine"
+        },
+        {
+          "value": "night",
+          "label": "Night"
+        },
+        {
+          "value": "retro",
+          "label": "Retro"
+        },
+        {
+          "value": "silver",
+          "label": "Silver"
+        }
+      ],
+      "default": "default",
+      "info": "Requires use of API key"
+    }
+  ]
+}
+
+{% endschema %}

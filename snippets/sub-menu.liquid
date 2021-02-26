@@ -1,0 +1,31 @@
+{% for link in linklists[sub-menu].links %}
+  {% if linklists[link.handle] != empty %}
+    {% assign link_count = linklists[link.handle].links | size %}
+    <div class="dropdown_container" data-dropdown="{{ link.handle }}">
+      <div class="dropdown menu">
+        <div class="dropdown_content {% if link_count < 4 %}dropdown_narrow{% endif %}">
+          {% for sublink in linklists[link.handle].links %}
+            <div class="dropdown_column">
+              <ul class="{% if linklists[sublink.handle] != empty %}dropdown_title{% else %}dropdown_item{% endif %}">
+                <li>
+                  <a href="{{ sublink.url }}">{{ sublink.title }}</a>
+                </li>
+              </ul>
+
+              {% if linklists[sublink.handle] != empty %}
+                <ul>
+                  {% for subsublink in linklists[sublink.handle].links %}
+                    <li>
+                      <a href="{{ subsublink.url }}">{{ subsublink.title }}</a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </div>
+            {% cycle link.handle: '', '', '', '', '<div class="dropdown_row"></div>' %}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{% endfor %}

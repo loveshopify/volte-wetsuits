@@ -1,0 +1,17 @@
+{% if type == 'block' %}
+  {% assign id = block.id %}
+  {% assign show_border = block.show_border %}
+  {% assign divider_border = block.settings.divider_border %}
+  {% assign divider_spacing = block.settings.divider_spacing %}
+{% else %}
+  {% assign id = section.id %}
+  {% assign show_border = section.show_border %}
+  {% assign divider_border = section.settings.divider_border %}
+  {% assign divider_spacing = section.settings.divider_spacing %}
+{% endif %}
+
+<div class="container" style="padding: 0;">
+  <div class="sixteen columns">
+    <hr class="page-divider {% if divider_border %}active-divider{% endif %}" style="{% if divider_spacing %}margin: {{ divider_spacing }}px 0px;{% endif %}">
+  </div>
+</div>

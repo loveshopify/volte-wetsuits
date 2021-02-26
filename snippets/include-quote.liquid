@@ -1,0 +1,13 @@
+<div class="container" data-block-id="{{block.id}}">
+  <div class="sixteen columns">
+    <h4 class="quote">
+      {% if block.settings.quote_link != blank %}
+        <a href="{{ block.settings.quote_link }}">
+          {{ block.settings.quote_text }}
+        </a>
+      {% else %}
+        {{ block.settings.quote_text }}
+      {% endif %}
+    </h4>
+  </div>
+</div>

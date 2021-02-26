@@ -1,0 +1,43 @@
+{% if section.settings.image != nil %}
+  <header class="banner center page_banner dark-overlay-{{ section.settings.image_darken }}">
+    <img  src="{{ section.settings.image | img_url: '100x' }}"
+          alt="{% if section.settings.image.alt != blank %}{{ section.settings.image.alt }}{% else %}{{ blog.title | escape }}{% endif %}"
+          class="lazyload {{ settings.image_loading_style }}"
+          data-src="{{ section.settings.image | img_url: '1400x' }}"
+          sizes="100vw"
+          srcset="{{ section.settings.image | img_url: '480x' }} 480w,
+                  {{ section.settings.image | img_url: '765x' }} 765w,
+                  {{ section.settings.image | img_url: '1400x' }} 1400w,
+                  {{ section.settings.image | img_url: '2048x' }} 2048w"
+           />
+     	<div class="caption captionOverlay--true">
+          <h1 class="headline">{{ 'customer.login.title' | t  }}</h1>
+        </div>
+  </header>
+
+{% endif %}
+
+
+{% schema %}
+
+{
+  "name": "Login",
+  "class": "login-section",
+  "settings": [
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Banner image",
+        "info": "1800 x 800px recommended"
+      },
+      {
+        "type": "checkbox",
+        "id": "image_darken",
+        "label": "Darken banner image",
+        "default": false
+      }
+  
+  ]
+}
+
+{% endschema %}

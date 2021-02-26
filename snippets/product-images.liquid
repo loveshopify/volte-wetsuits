@@ -1,0 +1,150 @@
+{% assign featured_image = product.selected_or_first_available_variant.featured_image | default: product.featured_image %}
+  {% capture list %}
+    {% for image in product.images %}
+      {% comment %}Loop through images only once{% endcomment %}
+      {{ image.id }}`~`{{ image.alt }}`~`{{ image | product_img_url: '100x' }}`~`{{ image | product_img_url: '200x' }}`~`{{ image | product_img_url: '400x' }}`~`{{ image | product_img_url: '600x' }}`~`{{ image | product_img_url: '800x' }}`~`{{ image | product_img_url: '1200x' }}`~`{{ image | product_img_url: '2000x' }}`~`{{-image.width-}}px`~`{{-image.height-}}px{% if forloop.last == false %}^{% endif %}
+    {% endfor %}
+  {% endcapture %}
+  {% assign image_list = list | split: "^" %}
+
+<div class="gallery-wrap js-product-page-gallery clearfix
+            gallery-arrows--{{section.settings.gallery_arrows}}
+            {% if section.settings.product_thumbs %} {{ section.settings.thumbnail_position }} {% endif %}
+            ">
+  <div class="product_gallery product-{{ product.id }}-gallery
+              {% if product.images.size > 1 %} multi-image {% endif %}
+              {% if product.images.size <= 1 %} single-image {% endif %}
+              transparentBackground--{{settings.slideshow_button_style}}
+              slideshow_animation--{{ section.settings.slideshow_animation }}
+              popup-enabled--{{ section.settings.enable_product_lightbox }}"
+      data-zoom="{{ section.settings.activate_zoom }}"
+      data-autoplay="{{ section.settings.activate_autoplay }}">
+
+      {% for image_item in image_list %}
+        {% assign image = image_item | split: "`~`" %}
+        {% capture image_id %}{{ image[0] | strip }}{% endcapture %}
+        {% capture image_alt %}{{ image[1] | strip }}{% endcapture %}
+        {% capture image_100x %}{{ image[2] }}{% endcapture %}
+        {% capture image_200x %}{{ image[3] }}{% endcapture %}
+        {% capture image_400x %}{{ image[4] }}{% endcapture %}
+        {% capture image_600x %}{{ image[5] }}{% endcapture %}
+        {% capture image_800x %}{{ image[6] }}{% endcapture %}
+        {% capture image_1200x %}{{ image[7] }}{% endcapture %}
+        {% capture image_2000x %}{{ image[8] }}{% endcapture %}
+        {% capture original_image_width %}{{- image[9] -}}{% endcapture %}
+        {% capture original_image_height %}{{- image[10] -}}{% endcapture %}
+        <div class="gallery-cell" data-thumb="{{ image_large }}" data-title="{% if image_alt contains 'youtube' or image_alt contains 'vimeo' %}{{ product.title }}{% else %}{{ image_alt | escape }}{% endif %}" data-image-height="{{ original_image_height | strip }}" data-image-width="{{ original_image_width | strip }}">
+          {% if image_alt contains 'youtube' or image_alt contains 'vimeo' %}
+            {% assign src = image_alt | split: 'src="' %}
+            {% assign src = src[1] | split: '"' | first %}
+
+            {% if src contains '?' %}
+              {% assign src = src | append: '&amp;autoplay=1&amp;rel=0' %}
+            {% else %}
+              {% assign src = src | append: '?autoplay=1&amp;rel=0' %}
+            {% endif %}
+
+            <div>
+              <a href="{{ src }}" title="{{ product.title | escape }}">
+                {{ image_alt }}
+              </a>
+            </div>
+          {% else %}
+            {% if template != 'index' and section.settings.enable_product_lightbox %}
+              <a href="{{ image_2000x }}" class="lightbox" rel="gallery" data-fancybox-group="gallery" data-lightbox-zoom="{{ section.settings.activate_zoom }}" >
+            {% endif %}
+            {% if image_width == 'full' %}
+              <div class="image__container" style="max-width: {{original_image_width}}">
+                <img  src="{{ image_1200x }}"
+                      alt="{{ image_alt | escape }}"
+                      class=" lazyload {{ settings.image_loading_style }}"
+                      data-index="{{ forloop.index0 }}"
+                      data-image-id="{{ image_id }}"
+                      />
+              </div>
+            {% else %}
+              <div class="image__container" style="max-width: {{original_image_width}}">
+                <img  src="{{ image_100x }}"
+                      alt="{{ image_alt | escape }}"
+                      class=" lazyload {{ settings.image_loading_style }}"
+                      data-index="{{ forloop.index0 }}"
+                      data-image-id="{{ image_id }}"
+                      data-sizes="{% if section.settings.enable_product_lightbox %}100vw{% else %}auto{% endif %}"
+                      data-src="{{ image_2000x }}"
+                      srcset=" {{ image_200x }} 200w,
+                                    {{ image_400x }} 400w,
+                                    {{ image_600x }} 600w,
+                                    {{ image_800x }} 800w,
+                                    {{ image_1200x }} 1200w,
+                                    {{ image_2000x }} 2000w"
+                       />
+              </div>
+            {% endif %}
+            {% if template != 'index' and section.settings.enable_product_lightbox %}
+              </a>
+            {% endif %}
+          {% endif %}
+        </div>
+      {% endfor %}
+  </div>
+{% comment %}  
+  {% if section.settings.product_thumbs %}
+    {% if product.images.size > 1 and image_width != 'full' %}
+      <div class="product_gallery_nav product_gallery_nav--{{ section.settings.thumbnail_position }} product-{{ product.id }}-gallery-nav">
+
+          {% for image_item in image_list %}
+            {% assign image = image_item | split: "`~`" %}
+            {% capture image_id %}{{ image[0] | strip }}{% endcapture %}
+            {% capture image_alt %}{{ image[1] | strip }}{% endcapture %}
+            {% capture image_100x %}{{ image[2] }}{% endcapture %}
+            {% capture image_200x %}{{ image[3] }}{% endcapture %}
+            {% capture image_400x %}{{ image[4] }}{% endcapture %}
+            {% capture image_600x %}{{ image[5] }}{% endcapture %}
+            {% capture image_800x %}{{ image[6] }}{% endcapture %}
+            {% capture image_1200x %}{{ image[7] }}{% endcapture %}
+            {% capture image_2000x %}{{ image[8] }}{% endcapture %}
+            <div class="gallery-cell" data-title="{{ image_alt | escape }}">
+                <img  src="{{ image_400x }}"
+                      alt="{{ image_alt | escape }}"
+                      data-index="{{ forloop.index0 }}"
+                      data-image-id="{{ image_id }}"
+                      data-featured-image="{{featured_image.id}}"
+                      />
+            </div>
+          {% endfor %}
+      </div>
+    {% endif %}
+  {% endif %}   
+{% endcomment %}  
+{% if  section.settings.thumbnail_position  %}
+ {% if section.settings.product_thumbs %}
+    {% if product.images.size > 1 and image_width != 'full' %}
+      <div class="product_gallery_nav product_gallery_nav--{{ section.settings.thumbnail_position }} product-{{ product.id }}-gallery-nav">
+
+          {% for image_item in image_list %}
+            {% assign image = image_item | split: "`~`" %}
+            {% capture image_id %}{{ image[0] | strip }}{% endcapture %}
+            {% capture image_alt %}{{ image[1] | strip }}{% endcapture %}
+            {% capture image_100x %}{{ image[2] }}{% endcapture %}
+            {% capture image_200x %}{{ image[3] }}{% endcapture %}
+            {% capture image_400x %}{{ image[4] }}{% endcapture %}
+            {% capture image_600x %}{{ image[5] }}{% endcapture %}
+            {% capture image_800x %}{{ image[6] }}{% endcapture %}
+            {% capture image_1200x %}{{ image[7] }}{% endcapture %}
+            {% capture image_2000x %}{{ image[8] }}{% endcapture %}
+            <div class="gallery-cell" data-title="{{ image_alt | escape }}">
+                <img  src="{{ image_400x }}"
+                      alt="{{ image_alt | escape }}"
+                      data-index="{{ forloop.index0 }}"
+                      data-image-id="{{ image_id }}"
+                      data-featured-image="{{featured_image.id}}"
+                      />
+            </div>
+          {% endfor %}
+      </div>
+    {% endif %}
+  {% endif %} 
+{% endif %}
+
+  
+</div>

@@ -1,0 +1,57 @@
+{% assign product_found = false %}
+{% assign skip = false %}
+{% assign collection_group = products | map: 'id' %}
+{% assign collection_group_thumb = collection_group | append : 'thumb' %}
+{% assign collection_group_mobile = collection_group | append : 'mobile' %}
+
+{% if template contains 'collection' %}
+  {% assign matrixType = 'collection-matrix' %}
+{% elsif template contains 'search' %}
+  {% assign matrixType = 'search-matrix' %}
+{% endif %}
+
+<div itemtype="http://schema.org/ItemList" class="product-list {{ matrixType }} clearfix equal-columns--clear equal-columns--outside-trim">
+  {% for product in products limit: limit %}
+    {% if product.id == skip_product.id or skip == true %}
+      {% assign product_found = true %}
+    {% else %}
+      {% if forloop.rindex0 == 0 and product_found == false and forloop.length != products.count and template != 'search' and template != 'index' and type != 'block' %}
+        {% assign skip = true %}
+      {% else %}
+
+        {% include 'product-thumbnail', sidebar: sidebar %}
+
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+  {% if template contains 'collection' %}
+    {% if settings.pagination_type == 'load_more' or settings.pagination_type == 'infinite_scroll' %}
+      {% if paginate.next.url %}
+        <span class="js-load-more load-more">
+          <a href="{{ paginate.next.url }}" data-no-instant class="load-more__btn action_button continue-button">
+            {% if template contains 'collection' %}
+              {{ 'collections.general.load_more' | t }}
+            {% elsif template contains 'search' %}
+              {{ 'general.search.load_more' | t }}
+            {% endif %}
+          </a>
+        </span>
+      {% endif %}
+    {% endif %}
+  {% elsif template contains 'search' %}
+    {% if settings.search_pagination_type == 'load_more' or settings.search_pagination_type == 'infinite_scroll' %}
+      {% if paginate.next.url %}
+        <span class="js-load-more load-more">
+          <a href="{{ paginate.next.url }}" data-no-instant class="load-more__btn action_button continue-button">
+            {% if template contains 'collection' %}
+              {{ 'collections.general.load_more' | t }}
+            {% elsif template contains 'search' %}
+              {{ 'general.search.load_more' | t }}
+            {% endif %}
+          </a>
+        </span>
+      {% endif %}
+    {% endif %}
+  {% endif %}
+</div>
+<div class="load-more__icon"></div>

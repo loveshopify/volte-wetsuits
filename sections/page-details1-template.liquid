@@ -1,0 +1,1174 @@
+{% comment %}
+** Details page - custom view **
+- Page template
+- Uses blocks
+{% endcomment %}
+
+<a name="pagecontent" id="pagecontent"></a>
+
+<div class="detail-sections">
+
+{% if section.blocks.size > 0 %}
+  {% for block in section.blocks %}
+    <div {{ block.shopify_attributes }} class="block__{{ block.type }} block__{{ block.id }}
+    {% if block.type == "image_with_text_overlay" and block.settings.wide_display %}
+      under-menu
+    {% elsif block.type == "featured_video" and block.settings.wide_display %}
+      under-menu
+    {% elsif block.type == "featured_collection" %}
+      featured-collection-section
+    {% endif %}
+    ">
+
+      {% if block.type == "blog_posts" %}
+        <!-- Blog posts -->
+        {% include 'include-featured-blog', type: 'block' %}
+
+      {% elsif block.type == "contact_form" %}
+        <!-- Contact form -->
+        {% include 'include-contact-form', type: 'block' %}
+
+      {% elsif block.type == "featured_video" %}
+        <!-- Featured video -->
+        {% include 'include-video', type: 'block' %}
+
+      {% elsif block.type == 'image_gallery' %}
+        <!-- Image gallery -->
+        {% include 'include-gallery', type: 'block' %}
+
+      {% elsif block.type == "image_with_text" %}
+        <!-- Image with text -->
+        {% if block.settings.layout == false %}
+          <div class="container standard--width">
+        {% endif %}
+        <div class="image-with-text
+          featured_collections
+          clearfix across-1 image-align--{{ block.settings.frontpage_image_position }}">
+          <section class="featured-link--section featured-link--image section-{{ forloop.index }}">
+            <div class="featured-link--half featured-link--image {% if block.settings.layout == false %}featured-link--margin{% endif %}">
+              <div class="featured-link--wrap">
+                <a {% if block.settings.link != blank %}href="{{ block.settings.link }}"{% endif %} title="{{ block.settings.title }}">
+                  {% if block.settings.image %}
+                    <img  src="{{ block.settings.image | img_url: '100x' }}"
+                          alt="{% if block.settings.image.alt != blank %}{{ block.settings.image.alt }}{% else %}{{ block.settings.title | escape }}{% endif %}"
+                          class="image-crop--{{ block.settings.image_crop }} lazyload full-width-image {{ settings.image_loading_style }}"
+                          data-sizes="auto"
+                          data-src="{{ block.settings.image | img_url: '1400x' }}"
+                          data-srcset=" {{ block.settings.image | img_url: '2048x' }} 2048w,
+                                        {{ block.settings.image | img_url: '1600x' }} 1600w,
+                                        {{ block.settings.image | img_url: '1200x' }} 1200w,
+                                        {{ block.settings.image | img_url: '1000x' }} 1000w,
+                                        {{ block.settings.image | img_url: '800x' }} 800w,
+                                        {{ block.settings.image | img_url: '600x' }} 600w,
+                                        {{ block.settings.image | img_url: '400x' }} 400w"
+                           />
+                  {% else %}
+                    {% capture i %}{% cycle "1", "2", "3", "4", "5", "6" %}{% endcapture %}
+                    {{ 'collection-' | append: i | placeholder_svg_tag: 'placeholder-svg placeholder-svg--promotions' }}
+                  {% endif %}
+                </a>
+              </div>
+            </div>
+            <div class="featured-link--half">
+              <div class="info text-align--{{block.settings.frontpage_text_align}}">
+                <a {% if block.settings.link != blank %}href="{{ block.settings.link }}"{% endif %} class="collection_title">
+                  {{ block.settings.title }}
+                </a>
+                {% if block.settings.text != blank %}
+                  <div class="description">{{ block.settings.text }}</div>
+                {% endif %}
+                {% if block.settings.button_label != blank %}
+                  <a {% if block.settings.link != blank %}href="{{ block.settings.link }}"{% endif %} class="button">
+                    {{ block.settings.button_label }}
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+          </section>
+        </div>
+        {% if block.settings.layout == false %}
+          </div>
+        {% endif %}
+
+        {% if block.settings.layout == false %}
+          <style>
+            #shopify-section-{{ section.id }} .featured-link--section {
+              margin-bottom: 3%;
+            }
+            @media only screen and (max-width: 480px) {
+              #shopify-section-{{ section.id }} .featured-link--section {
+                margin-bottom: 10%;
+              }
+            }
+
+            .standard--width .featured-link--margin {
+              margin-left: 0%;
+              margin-right: 3%;
+            }
+
+            .standard--width .image-align--right .featured-link--margin {
+              margin-left: 3%;
+              margin-right: 0%;
+            }
+
+            .standard--width .featured-link--half {
+              width: 45%;
+            }
+          </style>
+        {% endif %}
+
+      {% elsif block.type == 'map' %}
+        <!-- Map -->
+        {% include 'include-map', type: 'block' %}
+
+      {% elsif block.type == "page" %}
+        <!-- Page -->
+        {% include 'include-content-page', type: 'block' %}
+
+      {% elsif block.type == 'quote' %}
+        <!-- Quote -->
+        {% include 'include-quote', type: 'block' %}
+
+      {% elsif block.type == "rich_text_and_image" %}
+        <!-- Rich text and image -->
+        {% include 'include-featured-text', type: 'block' %}
+
+      {% elsif block.type == 'divider' %}
+        <!-- Divider -->
+        {% include 'include-divider', type: 'block' %}
+
+      {% elsif block.type == "featured_collection" %}
+        <!-- Featured collection -->
+        {% include 'include-featured-collection', type: 'block' %}
+
+      {% elsif block.type == "image_with_text_overlay" %}
+        <!-- Image with text overlay -->
+        {% include 'include-image-with-text-overlay', type: 'block' %}
+
+      {% elsif block.type == "recently_viewed_products" %}
+        <!-- Related Products -->
+        {% include 'include-recently-viewed', type: 'block' %}
+
+      {% elsif block.type == "custom_html" %}
+        <!-- Custom HTML -->
+        {% include 'include-custom-html', type: 'block' %}
+
+      {% endif %}
+    </div>
+  {% endfor %}
+{% endif %}
+</div>
+
+{% schema %}
+
+{
+  "name": "Page | details",
+  "class": "page-details-section",
+  "max_blocks": 20,
+  "blocks": [
+    {
+      "type": "blog_posts",
+      "name": "Blog posts",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Blog posts"
+        },
+        {
+          "type": "blog",
+          "id": "blog_widget_select",
+          "label": "Blog"
+        },
+        {
+          "type": "range",
+          "id": "home_page_articles",
+          "label": "Posts",
+          "min": 2,
+          "max": 4,
+          "step": 1,
+          "default": 3
+        },
+        {
+          "type": "checkbox",
+          "id": "blog_tags",
+          "label": "Show blog post tags"
+        },
+        {
+          "type": "checkbox",
+          "id": "blog_author",
+          "label": "Show author"
+        },
+        {
+          "type": "checkbox",
+          "id": "blog_date",
+          "label": "Show date",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "blog_comment_count",
+          "label": "Show comment count",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "read_more_link",
+          "label": "Show continue reading link for blog post excerpts",
+          "default": true
+        }
+      ]
+    },
+    {
+      "type": "contact_form",
+      "name": "Contact form",
+      "settings": [
+        {
+          "type": "text",
+          "id": "contact_heading",
+          "label": "Heading",
+          "default": "Get in touch"
+        },
+        {
+          "type": "text",
+          "id": "contact_subheading",
+          "label": "Subheading",
+          "default": "Leave a message"
+        },
+        {
+          "type": "richtext",
+          "id": "contact_content",
+          "label": "Text",
+          "default": "<p>Phasellus viverra nulla ut metus varius laoreet. Etiam sollicitudin, ipsum eu pulvinar rutrum, tellus ipsum laoreet sapien, quis venenatis ante odio sit amet eros. Etiam imperdiet imperdiet orci.</p>"
+        },
+        {
+          "type": "select",
+          "id": "contact_text_position",
+          "label": "Text position",
+          "default": "left",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "contact_text_alignment",
+          "label": "Text alignment",
+          "default": "left",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "custom_html",
+      "name": "Custom HTML",
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "custom_html",
+          "label": "Custom HTML"
+        }
+      ]
+    },
+    {
+      "type": "divider",
+      "name": "Divider",
+      "settings": [
+        {
+          "type": "range",
+          "id": "divider_spacing",
+          "min": 0,
+          "max": 30,
+          "step": 5,
+          "unit": "px",
+          "label": "Space",
+          "default": 20
+        },
+        {
+          "type": "checkbox",
+          "id": "divider_border",
+          "label": "Show border",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "featured_collection",
+      "name": "Featured collection",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Featured collection"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        },
+        {
+          "type": "radio",
+          "id": "collection_style",
+          "label": "Collection layout",
+          "default": "grid",
+          "options": [
+            {
+              "value": "slider",
+              "label": "Slider"
+            },
+            {
+              "value": "grid",
+              "label": "Grid"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "products_per",
+          "label": "Products per row",
+          "min": 2,
+          "max": 7,
+          "step": 1,
+          "default": 3
+        },
+        {
+          "type": "range",
+          "id": "products_limit",
+          "label": "Limit products",
+          "min": 2,
+          "max": 50,
+          "step": 1,
+          "default": 48
+        }
+      ]
+    },
+    {
+      "type": "image_gallery",
+      "name": "Image gallery",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "detail_image_1",
+          "label": "Image 1",
+          "info": "760 x 500px recommended"
+        },
+        {
+          "type": "image_picker",
+          "id": "detail_image_2",
+          "label": "Image 2",
+          "info": "760 x 500px recommended"
+        },
+        {
+          "type": "image_picker",
+          "id": "detail_image_3",
+          "label": "Image 3",
+          "info": "760 x 500px recommended"
+        }
+      ]
+    },
+    {
+      "type": "image_with_text",
+      "name": "Image with text",
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "layout",
+          "label": "Wide display"
+        },
+        {
+          "type": "select",
+          "id": "frontpage_text_align",
+          "label": "Text alignment",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "frontpage_image_position",
+          "label": "Image position",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
+          ]
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "info": "1024 x 1024px recommended"
+        },
+        {
+          "type": "select",
+          "id": "image_crop",
+          "label": "Image cropping",
+          "default": "none",
+          "info": "Only applied when text area is taller than image.",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Your headline"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Promotion description appears here.</p>"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button label",
+          "default": "View all"
+        }
+      ]
+    },
+    {
+      "type": "image_with_text_overlay",
+      "name": "Image with text overlay",
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "wide_display",
+          "label": "Wide display",
+          "default": true
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "info": "1800 x 1000px recommended"
+        },
+        {
+          "type": "richtext",
+          "id": "pretext",
+          "label": "Preheading",
+          "default": "<p>This is</p>"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Your headline"
+        },
+        {
+          "type": "richtext",
+          "id": "subtitle",
+          "label": "Text",
+          "default": "<p>Customize this section</p>"
+        },
+        {
+          "type": "checkbox",
+          "id": "caption_background",
+          "label": "Display solid text background",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "caption_background_transparency",
+          "label": "Enable background transparency"
+        },
+        {
+          "type": "select",
+          "id": "text_position",
+          "label": "Text position",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "text_align",
+          "label": "Text alignment",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "button1",
+          "label": "First button label",
+          "default": "Button"
+        },
+        {
+          "type": "url",
+          "id": "button1_link",
+          "label": "First link"
+        },
+        {
+          "type": "checkbox",
+          "id": "button1_highlight",
+          "label": "Highlight first button"
+        },
+        {
+          "type": "text",
+          "id": "button2",
+          "label": "Second button label"
+        },
+        {
+          "type": "url",
+          "id": "button2_link",
+          "label": "Second link"
+        },
+        {
+          "type": "checkbox",
+          "id": "button2_highlight",
+          "label": "Highlight second button"
+        }
+      ]
+    },
+    {
+      "type": "map",
+      "name": "Map",
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "wide_display",
+          "label": "Wide display",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "map_address",
+          "label": "Address",
+          "info": "Google Maps will find the exact location"
+        },
+        {
+          "type": "range",
+          "id": "map_height",
+          "min": 300,
+          "max": 600,
+          "step": 10,
+          "unit": "px",
+          "label": "Map height",
+          "default": 400
+        },
+        {
+          "type": "range",
+          "id": "zoom_level",
+          "min": 1,
+          "max": 20,
+          "step": 1,
+          "unit": "x",
+          "label": "Map zoom level",
+          "default": 16
+        },
+        {
+          "type": "image_picker",
+          "id": "map_image",
+          "label": "Image",
+          "info": "Displayed when map isn't loaded"
+        },
+        {
+          "type": "header",
+          "content": "API key"
+        },
+        {
+          "type": "text",
+          "id": "api_key",
+          "label": "Google Maps API key",
+          "info": "You’ll need to [register a Google Maps API Key](https://help.shopify.com/manual/using-themes/troubleshooting/map-section-api-key) to display the map"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_pin",
+          "label": "Show pin",
+          "info": "Requires use of API key",
+          "default": true
+        },
+        {
+          "type": "select",
+          "id": "map_style",
+          "label": "Map color scheme",
+          "options": [
+            {
+              "value": "default",
+              "label": "Default"
+            },
+            {
+              "value": "aubergine",
+              "label": "Aubergine"
+            },
+            {
+              "value": "night",
+              "label": "Night"
+            },
+            {
+              "value": "retro",
+              "label": "Retro"
+            },
+            {
+              "value": "silver",
+              "label": "Silver"
+            }
+          ],
+          "default": "default",
+          "info": "Requires use of API key"
+        }
+      ]
+    },
+    {
+      "type": "page",
+      "name": "Page",
+      "settings": [
+        {
+          "type": "page",
+          "id": "content_page",
+          "label": "Content page"
+        }
+      ]
+    },
+    {
+      "type": "quote",
+      "name": "Quote",
+      "settings": [
+        {
+          "type": "text",
+          "id": "quote_text",
+          "label": "Text",
+          "default": "40% of online shoppers abandon a site that takes more than 3 seconds to load"
+        },
+        {
+          "type": "url",
+          "id": "quote_link",
+          "label": "Link"
+        }
+      ]
+    },
+    {
+      "type": "recently_viewed_products",
+      "name": "Recently viewed products",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "To test the recently viewed products, view your online store outside of the Editor and visit multiple product pages ([?](https:\/\/help.outofthesandbox.com\/hc\/en-us\/articles\/115008765228))"
+        },
+        {
+          "type": "text",
+          "id": "rv_title",
+          "label": "Heading",
+          "default": "Recently viewed products"
+        },
+        {
+          "type": "radio",
+          "id": "rv_products_style",
+          "label": "Layout",
+          "default": "grid",
+          "options": [
+            {
+              "value": "slider",
+              "label": "Slider"
+            },
+            {
+              "value": "grid",
+              "label": "Grid"
+            }
+          ]
+        },
+        {
+          "type": "range",
+          "id": "rv_max_display",
+          "label": "Products limit",
+          "min": 3,
+          "max": 12,
+          "step": 1,
+          "default": 6
+        },
+        {
+          "type": "range",
+          "id": "rv_per",
+          "label": "Products per row",
+          "min": 3,
+          "max": 5,
+          "step": 1,
+          "default": 4
+        }
+      ]
+    },
+    {
+      "type": "rich_text_and_image",
+      "name": "Rich text and image",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Talk about your brand"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Text",
+          "default": "<p>Use this text to share information about your brand with your customers.</p><p>Describe a product, share announcements, or welcome customers to your store.</p>"
+        },
+        {
+          "type": "select",
+          "id": "text_size",
+          "label": "Text size",
+          "options": [
+            {
+              "value": "regular_text",
+              "label": "Regular"
+            },
+            {
+              "value": "featured_text",
+              "label": "Large"
+            }
+          ],
+          "default": "featured_text"
+        },
+        {
+          "type": "select",
+          "id": "text_alignment",
+          "label": "Text alignment",
+          "options": [
+            {
+              "value": "align_left",
+              "label": "Left"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            }
+          ],
+          "default": "center"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button label"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Link"
+        }
+      ]
+    },
+    {
+      "type": "featured_video",
+      "name": "Video",
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "wide_display",
+          "label": "Wide display",
+          "default": true
+        },
+        {
+          "type": "select",
+          "id": "source",
+          "label": "Video source",
+          "options": [
+            {
+              "value": "youtube",
+              "label": "YouTube"
+            },
+            {
+              "value": "vimeo",
+              "label": "Vimeo"
+            },
+            {
+              "value": "html5",
+              "label": "HTML5"
+            }
+          ],
+          "default": "youtube"
+        },
+        {
+          "type": "select",
+          "id": "aspect_ratio",
+          "label": "Aspect ratio",
+          "options": [
+            {
+              "value": "16:9",
+              "label": "16:9"
+            },
+            {
+              "value": "4:3",
+              "label": "4:3"
+            }
+          ],
+          "default": "16:9"
+        },
+        {
+          "type": "checkbox",
+          "id": "autoplay",
+          "label": "Autoplay video",
+          "default": false,
+          "info": "Limited browser support for autoplaying video ([?](https:\/\/help.outofthesandbox.com\/hc\/en-us\/articles\/360000661568-Why-won-t-my-video-autoplay-))"
+        },
+        {
+          "type": "checkbox",
+          "id": "autoloop",
+          "label": "Autoloop video",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "video_dark_overlay",
+          "label": "Darken video"
+        },
+        {
+          "type": "video_url",
+          "id": "video",
+          "label": "Video link",
+          "accept": ["youtube", "vimeo"],
+          "default": "https://www.youtube.com/watch?v=_9VUPq3SxOc"
+        },
+        {
+          "type": "text",
+          "id": "mp4",
+          "label": "HTML5 MP4 File URL"
+        },
+        {
+          "type": "text",
+          "id": "ogv",
+          "label": "HTML5 OGV File URL (optional)"
+        },
+        {
+          "type": "header",
+          "content": "Content"
+        },
+       {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "info": "1600 x 900px recommended"
+        },
+        {
+          "type": "checkbox",
+          "id": "display_text_over_video",
+          "label": "Show text when video is playing",
+          "default": false
+        },
+        {
+          "type": "richtext",
+          "id": "pretext",
+          "label": "Preheading"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading"
+        },
+        {
+          "type": "richtext",
+          "id": "subtitle",
+          "label": "Subheading"
+        },
+        {
+          "type": "select",
+          "id": "text_position",
+          "label": "Text position",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
+          ],
+          "default": "center"
+        },
+        {
+          "type": "select",
+          "id": "text_align",
+          "label": "Text alignment",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
+          ],
+          "default": "center"
+        },
+        {
+          "type": "checkbox",
+          "id": "caption_background",
+          "label": "Display solid text background"
+        },
+        {
+          "type": "checkbox",
+          "id": "caption_background_transparency",
+          "label": "Enable background transparency"
+        },
+        {
+          "type": "text",
+          "id": "button1_label",
+          "label": "First button label"
+        },
+        {
+          "type": "url",
+          "id": "button1_link",
+          "label": "First link"
+        },
+        {
+          "type": "checkbox",
+          "id": "button1_highlight",
+          "label": "Highlight first button"
+        },
+        {
+          "type": "text",
+          "id": "button2_label",
+          "label": "Second button label"
+        },
+        {
+          "type": "url",
+          "id": "button2_link",
+          "label": "Second link"
+        },
+        {
+          "type": "checkbox",
+          "id": "button2_highlight",
+          "label": "Highlight second button"
+        }
+      ]
+    }
+  ],
+  "default": {
+    "blocks": [
+      {
+        "type": "image_with_text_overlay",
+        "settings": {
+          "pretext": "<p>Introducing Your</p>",
+          "title": "Page Details Template",
+          "subtitle": "<p>Let's Get Started!</p>",
+          "text_position": "center",
+          "text_align": "center"
+        }
+      },
+      {
+        "type": "divider",
+        "settings": {
+          "divider_spacing": 20
+        }
+      },
+      {
+        "type": "rich_text_and_image",
+        "settings": {
+          "title": "Talk about your brand",
+          "content": "<p>Use this text to share information about your brand with your customers.</p><p>Describe a product, share announcements, or welcome customers to your store.</p>"
+        }
+      },
+      {
+        "type": "divider",
+        "settings": {
+          "divider_spacing": 10
+        }
+      },
+      {
+        "type": "featured_collection",
+        "settings": {
+          "collection_style": "grid",
+          "products_per": 4,
+          "products_limit": 8
+        }
+      },
+      {
+        "type": "divider",
+        "settings": {
+          "divider_spacing": 10
+        }
+      },
+      {
+        "type": "featured_video",
+        "settings": {
+          "autoplay": false,
+          "video": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+          "source": "youtube",
+          "title": "Video Section",
+          "button1_label": "Play Video"
+        }
+      },
+      {
+        "type": "image_with_text",
+        "settings": {
+        }
+      },
+      {
+        "type": "image_with_text",
+        "settings": {
+          "frontpage_image_position": "right"
+        }
+      },
+      {
+        "type": "divider",
+        "settings": {
+          "divider_spacing": 10
+        }
+      },
+      {
+        "type": "blog_posts",
+        "settings": {
+        }
+      },
+      {
+        "type": "divider",
+        "settings": {
+          "divider_spacing": 10
+        }
+      },
+      {
+        "type": "contact_form",
+        "settings": {
+          "contact_heading": "Get in touch",
+          "contact_subheading": "Leave a message",
+          "contact_content": "<p>Phasellus viverra nulla ut metus varius laoreet. Etiam sollicitudin, ipsum eu pulvinar rutrum, tellus ipsum laoreet sapien, quis venenatis ante odio sit amet eros. Etiam imperdiet imperdiet orci.</p>",
+          "contact_text_position": "left",
+          "contact_text_alignment": "left"
+      }
+      },
+      {
+        "type": "divider",
+        "settings": {
+          "divider_spacing": 10
+        }
+      },
+      {
+        "type": "map",
+        "settings": {
+        }
+      },
+      {
+        "type": "divider",
+        "settings": {
+        }
+      },
+      {
+        "type": "image_gallery",
+        "settings": {
+        }
+      },
+      {
+        "type": "divider",
+        "settings": {
+          "divider_spacing": 20
+        }
+      },
+      {
+        "type": "quote",
+        "settings": {
+          "quote_text": "40% of online shoppers abandon a site that takes more than 3 seconds to load"
+        }
+      },
+      {
+        "type": "divider",
+        "settings": {
+          "divider_spacing": 20
+        }
+      }
+    ]
+  }
+}
+
+{% endschema %}

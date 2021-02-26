@@ -1,0 +1,77 @@
+{% comment %}
+** Featured blog - homepage partial **
+- Draggable section
+{% endcomment %}
+
+{% include 'include-featured-blog' %}
+
+{% schema %}
+
+{
+  "name": "Blog posts",
+  "class": "featured-blog-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Blog posts"
+    },
+    {
+      "type": "blog",
+      "id": "blog_widget_select",
+      "label": "Blog"
+    },
+    {
+      "type": "range",
+      "id": "home_page_articles",
+      "label": "Posts",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "checkbox",
+      "id": "blog_tags",
+      "label": "Show blog post tags"
+    },
+    {
+      "type": "checkbox",
+      "id": "blog_author",
+      "label": "Show author"
+    },
+    {
+      "type": "checkbox",
+      "id": "read_time",
+      "label": "Show estimated read time",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "blog_date",
+      "label": "Show date",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "blog_comment_count",
+      "label": "Show comment count",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "read_more_link",
+      "label": "Show continue reading link for blog post excerpts",
+      "default": true
+    }
+  ],
+  "presets": [{
+    "name": "Blog posts",
+    "category": "Blog",
+    "settings": {
+      "blog_widget_select": ""
+    }
+  }]
+}
+{% endschema %}

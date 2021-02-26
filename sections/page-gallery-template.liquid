@@ -1,0 +1,215 @@
+{% comment %}
+** Gallery page - custom view **
+- Page template
+- Uses blocks
+{% endcomment %}
+
+<a name="pagecontent" id="pagecontent"></a>
+
+{% assign images_per_row = section.settings.grid-size %}
+
+<div class="container main content">
+
+  <div class="sixteen columns page clearfix">
+    <h1>
+      {{ page.title }}
+    </h1>
+    {% if section.settings.show_divider %}
+      <div class="feature_divider"></div>
+    {% endif %}
+  </div>
+
+  <div class="sixteen columns page">
+    {% if section.settings.title != blank %}
+      <div class="container">
+          <h2 class="title center">{{ section.settings.title | escape }}</h2>
+      </div>
+    {% endif %}
+
+   {% include 'page-multi-column', content: page.content %}
+   </div>
+
+ </div>
+
+{% unless section.settings.full_width %}
+  <div class="container gallery-content">
+{% endunless %}
+
+  <div  id="gallery_section-{{section.id}}" class="gallery-section {% if section.settings.full_width %}gallery-full{% else %}container{% endif %} gallery-{{ section.settings.gallery_type }}">
+    <div class="gallery-break"></div>
+    {% if section.blocks.size > 0 %}
+      {% if section.settings.gallery_type == 'masonry' %}
+        <div class="masonry {% if section.settings.full_width %}adjust-columns{% endif %}  {% if images_per_row == 2 %}two-per-row{% elsif images_per_row == 3 %}three-per-row{% elsif images_per_row == 4 %}four-per-row{% else %}five-per-row{% endif %}">
+      {% endif %}
+
+      {% for block in section.blocks %}
+        {% if block.settings.image != blank %}
+          <div class="gallery-image-wrapper {% unless section.settings.gallery_type == 'horizontal' or section.settings.gallery_type == 'masonry' %}{% if images_per_row == 2 %}two-per-row{% elsif images_per_row == 3 %}three-per-row{% elsif images_per_row == 4 %}four-per-row{% else %}five-per-row{% endif %} {% endunless %} {% unless section.settings.full_width %}add-padding{% endunless %}">
+            {% if section.settings.enable_lightbox %}
+              <div class="gallery-cell">
+              <a href="{{ block.settings.image |  img_url: '2000x' }}" class="lightbox" rel="gallery">
+            {% endif %}
+              <i class="image-{{ block.id }}"></i>
+              {{ block.settings.image |  img_url: '1000x', crop: 'center' | img_tag: block.settings.image.alt , block.id }}
+              {% if section.settings.enable_lightbox %}
+                <div class="overlay">
+                  <div class="display-table">
+                    <div class="display-table-cell">
+                      <span class="icon-search"></span>
+                    </div>
+                  </div>
+                </div>
+                </a>
+              </div>
+              {% endif %}
+          </div>
+        {% else %}
+          {% if section.settings.gallery_type == 'horizontal' and section.settings.full_width %}
+            {% capture placeholder_sizing %}{% cycle 'style="width:30%"', 'style="width:20%"', 'style="width:20%"', 'style="width:30%"', 'style="width:20%"', 'style="width:30%"', 'style="width:30%"', 'style="width:20%"' %}{% endcapture %}
+          {% elsif section.settings.gallery_type == 'horizontal' %}
+            {% capture placeholder_sizing %}{% cycle 'style="width:calc(30% - 10px);"', 'style="width:calc(20% - 10px);"', 'style="width:calc(20% - 10px);"', 'style="width:calc(30% - 10px);"', 'style="width:calc(20% - 10px);"', 'style="width:calc(30% - 10px);"', 'style="width:calc(30% - 10px);"', 'style="width:calc(20% - 10px);"' %}{% endcapture %}
+          {% elsif section.settings.gallery_type == 'masonry' %}
+            {% capture placeholder_sizing %}{% cycle 'style="height:150px"', 'style="height:150px"', 'style="height:200px"', 'style="height:150px"', 'style="height:200px"', 'style="height:150px"', 'style="height:150px"', 'style="height:200px"' %}{% endcapture %}
+          {% endif %}
+
+          <div class="gallery-empty-wrapper {% unless section.settings.gallery_type == 'horizontal' or section.settings.gallery_type == 'masonry' %}{% if images_per_row == 2 %}two-per-row{% elsif images_per_row == 3 %}three-per-row{% elsif images_per_row == 4 %}four-per-row{% else %}five-per-row{% endif %} {% endunless %} {% unless section.settings.full_width %}add-padding{% endunless %}" {{ block.shopify_attributes }}
+          {{ placeholder_sizing }}>
+            {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+          </div>
+        {% endif %}
+
+        {% unless section.settings.gallery_type == 'horizontal' or section.settings.gallery_type == 'masonry' %}
+          {% if images_per_row == 2 %}
+            {% cycle '', '<br class="clear" />' %}
+          {% elsif images_per_row == 3 %}
+            {% cycle '', '', '<br class="clear" />' %}
+          {% elsif images_per_row == 4 %}
+            {% cycle '', '', '', '<br class="clear" />' %}
+          {% elsif images_per_row == 5 %}
+           {% cycle '', '', '', '', '<br class="clear" />' %}
+          {% endif %}
+        {% endunless %}
+      {% endfor %}
+
+      {% if section.settings.gallery_type == 'masonry' %}
+        </div>
+      {% endif %}
+
+    {% endif %}
+  </div>
+</div>
+
+{% unless section.settings.full_width %}
+  </div>
+{% endunless %}
+
+<style>
+{% if section.settings.gallery_type == 'classic' and section.settings.full_width %}
+  .image-gallery-section {
+    line-height: 0;
+  }
+{% endif %}
+</style>
+
+{% schema %}
+  {
+    "name": "Page | gallery",
+    "class": "image-gallery-section",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "enable_lightbox",
+        "label": "Enable lightbox",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "gallery_type",
+        "label": "Gallery style",
+        "options": [
+          {
+            "value": "horizontal",
+            "label": "Horizontal masonry"
+          },
+          {
+            "value": "masonry",
+            "label": "Vertical masonry"
+          },
+          {
+            "value": "classic",
+            "label": "Classic"
+          }
+        ],
+        "default": "classic"
+      },
+      {
+        "type": "checkbox",
+        "id": "full_width",
+        "label": "Wide display"
+      },
+      {
+        "type": "range",
+        "id": "grid-size",
+        "label": "Images per row",
+        "min": 2,
+        "max": 5,
+        "step": 1,
+        "default": 4,
+        "info": "Vertical masonry and classic only"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_divider",
+        "label": "Show divider"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "image",
+        "name": "Image",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image",
+            "info": "800 x 800px recommended"
+          }
+        ]
+      }
+    ],
+    "default": {
+      "blocks": [
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        }
+      ]
+    }
+  }
+{% endschema %}

@@ -1,0 +1,351 @@
+{% comment %}
+** FAQ page - custom view **
+- Page template
+- Uses blocks
+{% endcomment %}
+
+{% if section.settings.show_banner %}
+
+  {% assign default = '1400x' %}
+  {% assign size1 = '480x' %}
+  {% assign size2 = '765x' %}
+  {% assign size3 = '900x' %}
+  {% assign size4 = '1000x' %}
+  {% assign size5 = '1100x' %}
+  {% assign size6 = '1300x' %}
+  {% assign size7 = '1500x' %}
+  {% assign size8 = '1700x' %}
+  {% assign size9 = '1900x' %}
+  {% assign size10 = '2000x' %}
+
+  <section id="banner-{{section.id}}" class="banner page_banner">
+    {% if section.settings.image != nil %}
+      <img  src="{{ section.settings.image | img_url: '100x', format: 'pjpg' }}"
+            alt="{{ section.settings.image.alt | escape }}"
+            class="lazyload {{ settings.image_loading_style }}"
+            sizes="100vw"
+            data-src="{{ section.settings.image | img_url: default, format: 'pjpg' }}"
+            srcset="
+            {{ section.settings.image | img_url: default, format: 'pjpg' }} {{default | replace: 'x', 'w'}},
+            {{ section.settings.image | img_url: size1, format: 'pjpg' }} {{size1 | replace: 'x', 'w'}},
+            {{ section.settings.image | img_url: size2, format: 'pjpg' }} {{size2 | replace: 'x', 'w'}},
+            {{ section.settings.image | img_url: size3, format: 'pjpg' }} {{size3 | replace: 'x', 'w'}},
+            {{ section.settings.image | img_url: size4, format: 'pjpg' }} {{size4 | replace: 'x', 'w'}},
+            {{ section.settings.image | img_url: size5, format: 'pjpg' }} {{size5 | replace: 'x', 'w'}},
+            {{ section.settings.image | img_url: size6, format: 'pjpg' }} {{size6 | replace: 'x', 'w'}},
+            {{ section.settings.image | img_url: size7, format: 'pjpg' }} {{size7 | replace: 'x', 'w'}},
+            {{ section.settings.image | img_url: size8, format: 'pjpg' }} {{size8 | replace: 'x', 'w'}},
+            {{ section.settings.image | img_url: size9, format: 'pjpg' }} {{size9 | replace: 'x', 'w'}},
+            {{ section.settings.image | img_url: size10, format: 'pjpg' }} {{size10 | replace: 'x', 'w'}}"
+
+             />
+    {% else %}
+      {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg placeholder-svg--banner' }}
+    {% endif %}
+    {% unless section.settings.button1_link != blank and section.settings.button2_link != blank %}
+      {% if section.settings.button1_link != blank %}
+        <a href="{{ section.settings.button1_link }}" class="banner-full-link">
+          {{ section.settings.button1 }}
+        </a>
+      {% endif %}
+      {% if section.settings.button2_link != blank %}
+        <a href="{{ section.settings.button2_link }}" class="banner-full-link">
+          {{ section.settings.button2 }}
+        </a>
+      {% endif %}
+    {% endunless %}
+    {% unless section.settings.pretext == blank and section.settings.title == blank and section.settings.subtitle == blank and section.settings.button1 == blank and section.settings.button2 == blank %}
+      <div class="position-{{ section.settings.text_position }} caption js-caption">
+        <div class="caption-content caption-background-{{ section.settings.caption_background }} caption-transparency-{{ section.settings.caption_background_transparency }} align-{{ section.settings.text_align }}">
+          {% if section.settings.pretext != blank %}
+            <div class="pretext">
+              {{ section.settings.pretext }}
+            </div>
+          {% endif %}
+          {% if section.settings.title != blank %}
+            <h1 class="headline">
+              {{ section.settings.title }}
+            </h1>
+          {% endif %}
+          {% if section.settings.subtitle != blank %}
+            <div class="subtitle">
+              {{ section.settings.subtitle }}
+            </div>
+          {% endif %}
+          {% if section.settings.button1 != blank %}
+            <a {% if section.settings.button1_link != blank %}href="{{ section.settings.button1_link }}"{% endif %} class="action_button first_button highlight-{{ section.settings.button1_highlight }}">
+              {{ section.settings.button1 }}
+            </a>
+          {% endif %}
+          {% if section.settings.button2 != blank %}
+            <a {% if section.settings.button2_link != blank %}href="{{ section.settings.button2_link }}"{% endif %} class="action_button second_button highlight-{{ section.settings.button2_highlight }}">
+              {{ section.settings.button2 }}
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    {% endunless %}
+  </section>
+
+{% endif %}
+
+<a name="pagecontent" id="pagecontent"></a>
+
+<div class="container main content">
+  <div class="sixteen columns page clearfix">
+    {% unless section.settings.show_banner %}
+      <h1>
+        {{ page.title }}
+      </h1>
+      <div class="feature_divider"></div>
+    {% endunless %}
+    <div>
+      {% include 'page-multi-column', content: page.content %}
+    </div>
+  </div>
+  <div class="sixteen columns">
+    {% if section.blocks.size > 0 %}
+      <dl class="faqAccordion">
+        {% for block in section.blocks %}
+          {% if block.type == "heading" %}
+            {% if block.settings.heading != blank %}
+              <h2 class="title faq--heading">{{ block.settings.heading }}</h2>
+            {% endif %}
+          {% endif %}
+          {% if block.settings.title != blank %}
+            <dt><button type="button" aria-controls="panel-01" aria-expanded="true">{{ block.settings.title }}</button></dt>
+            <dd id="panel-01" aria-hidden="false">
+              {{ block.settings.subtitle }}
+            </dd>
+          {% endif %}
+        {% endfor %}
+      </dl>
+    {% endif %}
+  </div>
+</div>
+
+<style>
+  {% if section.settings.show_banner %}
+    .mobile_nav-fixed--true #pagecontent, .mobile_nav-fixed--false #pagecontent {
+      padding: 0;
+    }
+    @media only screen and (max-width: 479px) {
+      div.content {
+        padding-top: 0;
+      }
+    }
+  {% endif %}
+</style>
+
+{% schema %}
+
+{
+  "name": "Page | faq",
+  "class": "faq-section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_banner",
+      "label": "Show banner",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image",
+      "info": "1800 x 1000px recommended"
+    },
+    {
+      "type": "richtext",
+      "id": "pretext",
+      "label": "Preheading"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "subtitle",
+      "label": "Subheading"
+    },
+    {
+      "type": "checkbox",
+      "id": "caption_background",
+      "label": "Display solid text background",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "caption_background_transparency",
+      "label": "Enable background transparency"
+    },
+    {
+      "type": "select",
+      "id": "text_position",
+      "label": "Text position",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "button1",
+      "label": "First button label"
+    },
+    {
+      "type": "url",
+      "id": "button1_link",
+      "label": "First button link"
+    },
+    {
+      "type": "checkbox",
+      "id": "button1_highlight",
+      "label": "Highlight first button"
+    },
+    {
+      "type": "text",
+      "id": "button2",
+      "label": "Second button label"
+    },
+    {
+      "type": "url",
+      "id": "button2_link",
+      "label": "Second button link"
+    },
+    {
+      "type": "checkbox",
+      "id": "button2_highlight",
+      "label": "Highlight second button"
+    }
+  ],
+  "blocks": [
+    {
+      "name": "Heading",
+      "type": "heading",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Title"
+        }
+      ]
+    },
+    {
+      "name": "Frequently Asked Question",
+      "type": "Content",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Question",
+          "default": "Title"
+        },
+        {
+          "type": "richtext",
+          "id": "subtitle",
+          "label": "Answer",
+          "default": "<p>Suspendisse feugiat. Fusce commodo aliquam arcu. Phasellus leo dolor, tempus non, auctor et, hendrerit quis, nisi.</p>"
+        }
+      ]
+    }
+  ],
+  "default": {
+    "settings": {
+      "title": "Page FAQ Template",
+      "subtitle": "<p>Create an amazing FAQ page with a full-width banner</p>",
+      "text_position": "center",
+      "text_align": "center"
+    },
+    "blocks": [
+      {
+        "type": "heading",
+        "settings": {
+          "heading": "Section"
+        }
+      },
+      {
+        "type": "Content",
+        "settings": {
+          "title": "Title",
+          "subtitle": "<p>Suspendisse feugiat. Fusce commodo aliquam arcu. Phasellus leo dolor, tempus non, auctor et, hendrerit quis, nisi.</p>"
+        }
+      },
+      {
+        "type": "Content",
+        "settings": {
+          "title": "Title",
+          "subtitle": "<p>Suspendisse feugiat. Fusce commodo aliquam arcu. Phasellus leo dolor, tempus non, auctor et, hendrerit quis, nisi.</p>"
+        }
+      },
+      {
+        "type": "Content",
+        "settings": {
+          "title": "Title",
+          "subtitle": "<p>Suspendisse feugiat. Fusce commodo aliquam arcu. Phasellus leo dolor, tempus non, auctor et, hendrerit quis, nisi.</p>"
+        }
+      },
+      {
+        "type": "heading",
+        "settings": {
+          "heading": "Section"
+        }
+      },
+      {
+        "type": "Content",
+        "settings": {
+          "title": "Title",
+          "subtitle": "<p>Suspendisse feugiat. Fusce commodo aliquam arcu. Phasellus leo dolor, tempus non, auctor et, hendrerit quis, nisi.</p>"
+        }
+      },
+      {
+        "type": "Content",
+        "settings": {
+          "title": "Title",
+          "subtitle": "<p>Suspendisse feugiat. Fusce commodo aliquam arcu. Phasellus leo dolor, tempus non, auctor et, hendrerit quis, nisi.</p>"
+        }
+      },
+      {
+        "type": "Content",
+        "settings": {
+          "title": "Title",
+          "subtitle": "<p>Suspendisse feugiat. Fusce commodo aliquam arcu. Phasellus leo dolor, tempus non, auctor et, hendrerit quis, nisi.</p>"
+        }
+      }
+    ]
+  }
+}
+
+{% endschema %}

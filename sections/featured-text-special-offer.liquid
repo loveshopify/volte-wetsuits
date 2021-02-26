@@ -1,0 +1,153 @@
+{% comment %}
+** Featured text - homepage partial **
+- Draggable section
+{% endcomment %}
+
+{% include 'include-featured-text-special-offer' %}
+
+<style>
+  
+  {% if section.settings.background_color != blank %}
+  
+  #shopify-section-{{ section.id }} {
+    background-color: {{ section.settings.background_color }};
+  }
+  
+  {% endif %}
+  
+  {% if section.settings.h1_color != blank %}
+  #shopify-section-{{ section.id }} h2.title {
+    color: {{ section.settings.h1_color }};
+  }
+  {% endif %}
+  
+  {% if section.settings.featured_color != blank %}
+  #shopify-section-{{ section.id }} .featured_text {
+    color: {{ section.settings.featured_color }};
+  }
+  {% endif %}
+
+  {% unless section.settings.show_lines %}
+  #shopify-section-{{ section.id }}:after, #shopify-section-{{ section.id }}:before{
+    content: none;
+  }
+  {% endunless %}
+
+  {% if section.settings.button_link_color != blank %}
+  .sepcial_offer_section.headline-section .home-{{ section.id }} .action_button {
+    color: {{ section.settings.button_link_color }};
+  }
+  {% endif %}
+  
+  {% if section.settings.button_link_color_hover != blank %}
+  .sepcial_offer_section.headline-section .home-{{ section.id }} .action_button:hover {
+    color: {{ section.settings.button_link_color_hover }};
+  }
+  {% endif %}
+  
+  
+</style>
+
+{% schema %}
+  {
+    "name": "Special Offer Section",
+    "class": "sepcial_offer_section headline-section featured-content-section",
+    "settings": [
+      {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color"
+      },
+	  {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Image"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "Talk about your brand"
+      },
+	  {
+      "type": "color",
+      "id": "h1_color",
+      "label": "Title Color"
+      },
+      {
+        "type": "richtext",
+        "id": "content",
+        "label": "Text",
+        "default": "<p>Use this text to share information about your brand with your customers. Describe a product, share announcements, or welcome customers to your store.</p>"
+      },
+	  {
+      "type": "color",
+      "id": "featured_color",
+      "label": "Text Color"
+      },
+      {
+        "type": "select",
+        "id": "text_size",
+        "label": "Text size",
+        "options": [
+          {
+            "value": "regular_text",
+            "label": "Regular"
+          },
+          {
+            "value": "featured_text",
+            "label": "Large"
+          }
+        ],
+        "default": "featured_text"
+      },
+      {
+        "type": "select",
+        "id": "text_alignment",
+        "label": "Text alignment",
+        "options": [
+          {
+            "value": "align_left",
+            "label": "Left"
+          },
+          {
+            "value": "center",
+            "label": "Center"
+          }
+        ],
+        "default": "center"
+      },
+      {
+        "type": "text",
+        "id": "button_label",
+        "label": "Button label"
+      },
+      {
+        "type": "url",
+        "id": "button_link",
+        "label": "Button link"
+      },
+	  {
+        "type": "color",
+        "id": "button_link_color",
+        "label": "Button Text Color"
+      },
+	  {
+        "type": "color",
+        "id": "button_link_color_hover",
+        "label": "Button Text Color Hover"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_lines",
+        "label": "Show Lines"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Special Offer Section",
+        "category": "Text"
+      }
+    ]
+  }
+{% endschema %}

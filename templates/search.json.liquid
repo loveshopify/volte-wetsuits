@@ -1,0 +1,59 @@
+{% layout none %}
+
+{% assign imgSrc = '""' %}
+{% assign price = '""' %}
+{% assign compare = '""' %}
+{% assign collections = '""' %}
+{% assign rawPrice = '""' %}
+{% assign rawCompare = '""' %}
+{% assign priceVaries = '""' %}
+{% assign priceMin = '""' %}
+{% assign textContent = '""' %}
+
+{% capture results %}
+  {% for item in search.results %}
+
+    {% if item.object_type == 'product' %}
+      {% assign imgSrc = item.featured_image.src | img_url: '200x'  | json %}
+      {% assign collections = item.collections | json %}
+      {% assign price = item.price | money | json %}
+      {% assign rawPrice = item.price | json %}
+      {% assign available = item.available | json %}
+      {% assign compare = item.compare_at_price_max | money | json %}
+      {% assign rawCompare = item.compare_at_price_max | json %}
+      {% assign priceVaries = item.price_varies | json %}
+      {% assign priceMin = item.price_min | json %}
+    {% elsif item.object_type == 'article' %}
+      {% if item.image.src != blank %}
+        {% assign imgSrc = item.image.src | img_url: '200x' | json %}
+      {% endif %}
+      {% assign textContent = item.excerpt | strip_html | truncatewords: 5 | json %}
+      {% assign available = true %}
+    {% elsif item.object_type == 'page' %}
+      {% assign available = true %}
+      {% assign textContent = item.content | strip_html | truncatewords: 5 | json %}
+    {% endif %}
+
+    {% assign product = item %}
+      {
+        "object_type": {{ product.object_type | json }},
+        "title"    : {{ product.title | json }},
+        "url"      : {{ product.url | json }},
+        "available": {{ available }},
+        "thumbnail": {{ imgSrc }},
+        "price"    : {{ price }},
+        "compare"  : {{ compare }},
+        "collections": {{ collections }},
+        "raw_price": {{ rawPrice }},
+        "raw_compare": {{ rawCompare }},
+        "price_varies": {{ priceVaries }},
+        "price_min": {{ priceMin }},
+        "text_content": {{ textContent }}
+      }
+    {% unless forloop.last %},{% endunless %}
+  {% endfor %}
+{% endcapture %}
+{
+  "results_count": {{ search.results_count }},
+  "results": [{{ results }}]
+}

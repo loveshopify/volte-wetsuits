@@ -1,0 +1,321 @@
+{% comment %}
+** Image with text (half and half view) - homepage partial **
+- Draggable section
+- Uses blocks
+{% endcomment %}
+{% if section.settings.frontpage_grid_style == false %}
+  <div class="container">
+    <div class="sixteen columns">
+{% endif %}
+    <div class="image-with-text
+                featured_collections
+                clearfix across-{{section.settings.featured_links_per_row}} image-align--{{ section.settings.frontpage_image_position }}
+                full-width--{{ section.settings.frontpage_grid_style }}">
+      {% if section.blocks.size > 0 %}
+        {% for block in section.blocks %}
+          <section class="featured-link--section featured-link--image section-{{ forloop.index }}" {{ block.shopify_attributes }}>
+            <div class="featured-link--half featured-link--image featured-link--margin">
+              <div class="featured-link--wrap">
+                <a {% if block.settings.link != blank %}href="{{ block.settings.link }}"{% endif %} title="{{ block.settings.title }}">
+                  {% if block.settings.image %}
+                    <img  src="{{ block.settings.image | img_url: '100x' }}"
+                          alt="{% if block.settings.image.alt != blank %}{{ block.settings.image.alt | escape }}{% else %}{{ block.settings.title | escape }}{% endif %}"
+                          class="lazyload full-width-image image-crop--{{ block.settings.image_crop }} {{ settings.image_loading_style }}"
+                          data-sizes="auto"
+                          data-src="{{ block.settings.image | img_url: '1600x' }}"
+                          data-srcset=" {{ block.settings.image | img_url: '400x' }} 400w,
+                                        {{ block.settings.image | img_url: '500x' }} 500w,
+                                        {{ block.settings.image | img_url: '600x' }} 600w,
+                                        {{ block.settings.image | img_url: '700x' }} 700w,
+                                        {{ block.settings.image | img_url: '800x' }} 800w,
+                                        {{ block.settings.image | img_url: '900x' }} 900w,
+                                        {{ block.settings.image | img_url: '1200x' }} 1200w,
+                                        {{ block.settings.image | img_url: '1600x' }} 1600w"
+                        />
+                  {% else %}
+                    {% capture i %}{% cycle "1", "2", "3", "4", "5", "6" %}{% endcapture %}
+                    {{ 'collection-' | append: i | placeholder_svg_tag: 'placeholder-svg placeholder-svg--promotions' }}
+                  {% endif %}
+                </a>
+              </div>
+            </div>
+            <div class="featured-link--half block--{{ block.id }}">
+              <div class="info text-align--{{section.settings.frontpage_text_align}}">
+                <a {% if block.settings.link != blank %}href="{{ block.settings.link }}"{% endif %} class="collection_title">
+                  {{ block.settings.title }}
+                </a>
+                {% if block.settings.text != blank %}
+                  <div class="description">{{ block.settings.text }}</div>
+                {% endif %}
+                {% if block.settings.is_services %}
+                    <div id="description_html">
+                       <div class="description-section-image"><img src="{{ 'specs1.png' | asset_url }}" title="TECHNOLOGY"><span>TECHNOLOGY</span></div>
+                      <div class="description-section-image"><img src="{{ 'specs2.png' | asset_url }}" title="SCIENCE"><span>SCIENCE</span></div>
+                      <div class="description-section-image"><img src="{{ 'specs3.png' | asset_url }}" title="DESIGN"><span>DESIGN</span></div>
+                      <div class="description-section-image"><img src="{{ 'specs4.png' | asset_url }}" title="TESTING"><span>TESTING</span></div>
+                      <div class="description-section-image"><img src="{{ 'specs5.png' | asset_url }}" title="EXPERTISE"><span>EXPERTISE</span></div>
+                    </div>
+                {% endif %}
+                
+                {% if block.settings.button_label != blank %}
+                  <a {% if block.settings.link != blank %}href="{{ block.settings.link }}"{% endif %} class="button">
+                    {{ block.settings.button_label }}
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+          </section>
+        {% endfor %}
+      {% endif %}
+    </div>
+{% if section.settings.frontpage_grid_style == false %}
+    </div>
+  </div>
+{% endif %}
+
+<style>
+
+  {% for block in section.blocks %}
+    .block--{{ block.id }} {
+      background-color: {{ block.settings.bg_color }};
+    }
+
+    .block--{{ block.id }} .collection_title,
+    .block--{{ block.id }} p {
+      color: {{ block.settings.text_color }};
+    }
+
+    .block--{{ block.id }} a.button {
+      color: {{ block.settings.text_color }};
+      border-color: {{ block.settings.text_color }};
+    }
+  {% endfor %}
+
+  {% if section.settings.frontpage_grid_style == false and section.settings.featured_links_per_row == '1' %}
+      #shopify-section-{{ section.id }} .featured-link--section {
+        margin-bottom: 3%;
+      }
+      @media only screen and (max-width: 480px) {
+        #shopify-section-{{ section.id }} .featured-link--section {
+          margin-bottom: 10%;
+        }
+      }
+
+      #shopify-section-{{ section.id }} .featured-link--half {
+        width: 45%;
+      }
+      #shopify-section-{{ section.id }} .featured-link--margin {
+        {% if section.settings.frontpage_image_position == 'right' %}
+          margin-left: 3%;
+        {% else %}
+          margin-left: 0;
+          margin-right: 3%;
+        {% endif %}
+      }
+      #shopify-section-{{ section.id }} .featured-link--section:nth-child(even) .featured-link--margin {
+        {% if section.settings.frontpage_image_position == 'right' %}
+          margin-left: 0;
+          margin-right: 3%;
+        {% else %}
+          margin-left: 3%;
+          margin-right: 0;
+        {% endif %}
+      }
+
+    {% elsif section.settings.frontpage_grid_style == false and section.settings.featured_links_per_row == '2' %}
+
+        @media only screen and (max-width: 480px) {
+          #shopify-section-{{ section.id }} .featured-link--section {
+            margin-bottom: 10%;
+          }
+        }
+
+        #shopify-section-{{ section.id }} .featured-link--margin {
+          margin-right: 0;
+          margin-left: 0;
+        }
+
+        #shopify-section-{{ section.id }} .featured-link--section:nth-child(even) .featured-link--margin {
+          margin-left: 0;
+          margin-right: 0;
+        }
+
+      {% endif %}
+  
+  {% if section.settings.background_color != blank %}
+  
+  #shopify-section-{{ section.id }} {
+    background-color: {{ section.settings.background_color }};
+  }
+  
+  {% endif %}
+  
+  
+</style>
+
+{% schema %}
+{
+  "name": "Image with text",
+  "class": "image-with-text-section",
+  "max_blocks": 16,
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "frontpage_grid_style",
+      "label": "Wide display"
+    },
+	{
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color"
+    },
+    {
+      "type": "select",
+      "id": "featured_links_per_row",
+      "label": "Images per row",
+      "options": [
+        {
+          "value": "1",
+          "label": "1"
+        },
+        {
+          "value": "2",
+          "label": "2"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "frontpage_text_align",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "frontpage_image_position",
+      "label": "First image position",
+      "info": "Subsequent images will appear staggered",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "type": "image",
+      "name": "Image with text",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "info": "1024 x 1024px recommended"
+        },
+        {
+          "type": "select",
+          "id": "image_crop",
+          "label": "Image cropping",
+          "default": "none",
+          "info": "Only applied when text area is taller than image.",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Your headline"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Promotion description appears here.</p>"
+        },
+		 {
+          "type": "checkbox",
+          "id": "is_services",
+          "label": "Show Services"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button label",
+          "default": "View all"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Button link"
+        },
+        {
+          "type": "header",
+          "content": "Colors"
+        },
+        {
+          "type": "color",
+          "id": "bg_color",
+          "label": "Background"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Text"
+        }
+      ]
+    }
+  ],
+  "presets": [{
+    "name": "Image with text",
+    "category": "Image",
+    "settings": {
+      "featured_links_per_row": "1",
+      "frontpage_text_align": "left"
+    },
+    "blocks": [
+      {
+        "type": "image"
+      },
+      {
+        "type": "image"
+      }
+    ]
+  }]
+}
+{% endschema %}

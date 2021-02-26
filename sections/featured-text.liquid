@@ -1,0 +1,119 @@
+{% comment %}
+** Featured text - homepage partial **
+- Draggable section
+{% endcomment %}
+
+{% include 'include-featured-text' %}
+
+<style>
+  
+  {% if section.settings.background_color != blank %}
+  
+  #shopify-section-{{ section.id }} {
+    background-color: {{ section.settings.background_color }};
+  }
+  
+  {% endif %}
+  
+  {% if section.settings.h1_color != blank %}
+  #shopify-section-{{ section.id }} h2.title {
+    color: {{ section.settings.h1_color }};
+  }
+  {% endif %}
+  
+  {% if section.settings.featured_color != blank %}
+  #shopify-section-{{ section.id }} .featured_text {
+    color: {{ section.settings.featured_color }};
+  }
+  {% endif %}
+  
+</style>
+
+{% schema %}
+  {
+    "name": "Rich text and image",
+    "class": "headline-section featured-content-section",
+    "settings": [
+      {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color"
+      },
+	  {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Image"
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "Talk about your brand"
+      },
+	  {
+      "type": "color",
+      "id": "h1_color",
+      "label": "Title Color"
+      },
+      {
+        "type": "richtext",
+        "id": "content",
+        "label": "Text",
+        "default": "<p>Use this text to share information about your brand with your customers. Describe a product, share announcements, or welcome customers to your store.</p>"
+      },
+	  {
+      "type": "color",
+      "id": "featured_color",
+      "label": "Text Color"
+      },
+      {
+        "type": "select",
+        "id": "text_size",
+        "label": "Text size",
+        "options": [
+          {
+            "value": "regular_text",
+            "label": "Regular"
+          },
+          {
+            "value": "featured_text",
+            "label": "Large"
+          }
+        ],
+        "default": "featured_text"
+      },
+      {
+        "type": "select",
+        "id": "text_alignment",
+        "label": "Text alignment",
+        "options": [
+          {
+            "value": "align_left",
+            "label": "Left"
+          },
+          {
+            "value": "center",
+            "label": "Center"
+          }
+        ],
+        "default": "center"
+      },
+      {
+        "type": "text",
+        "id": "button_label",
+        "label": "Button label"
+      },
+      {
+        "type": "url",
+        "id": "button_link",
+        "label": "Button link"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Rich text and image",
+        "category": "Text"
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,25 @@
+{% if type == 'block' %}
+  {% assign search_term = block.settings.search_term %}
+{% else %}
+  {% assign search_term = section.settings.search_term %}
+{% endif %}
+
+
+<div class="search__container" data-autocomplete-{{ settings.enable_autocomplete }}>
+  <form class="search search__form" action="/search">
+    <div class="search__wrapper">
+      {% if settings.search_option != 'everything' %}
+        <input type="hidden" name="type" value="product" />
+      {% endif %}
+      <input type="text" name="q" placeholder="{{ search_term }}" value="{{ search.terms | replace: '*', ''}}" x-webkit-speech autocapitalize="off" autocomplete="off" autocorrect="off" />
+      <button type="submit" name="submit" class="search__button icon-search" value=" " >
+        <span class"icon-search"></span>
+      </button>
+    </div>
+  </form>
+</div>
+
+
+<style>
+  .search-results li.item-result:hover { background: {{ settings.link_color | color_modify: 'alpha', 0.50  }}; }
+</style>

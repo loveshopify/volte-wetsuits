@@ -1,0 +1,27 @@
+{% comment %}
+** Content - homepage partial **
+- Draggable section
+{% endcomment %}
+
+{% include 'include-content-page' %}
+
+{% schema %}
+
+{
+  "name": "Page",
+  "class": "page-section",
+  "settings": [
+    {
+      "type": "page",
+      "id": "content_page",
+      "label": "Content page"
+    }
+  ],
+  "presets": [{
+    "name": "Page",
+    "category": "Text",
+    "settings": {
+    }
+  }]
+}
+{% endschema %}

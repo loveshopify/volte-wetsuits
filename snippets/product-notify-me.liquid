@@ -1,0 +1,28 @@
+{% if settings.notify_me_form %}
+  <div class="notify_form notify-form-{{ product.id }}" id="notify-form-{{ product.id }}" {% if product.available %}style="display:none"{% endif %}>
+    <p class="message"></p>
+    {% form 'contact', id: "notify_me" %}
+      {% if form.errors %}
+        <p><em>{{ 'products.notify_form.post_error' | t }}</em></p>
+      {% else %}
+        <p>
+          <label aria-hidden="true" class="visuallyhidden" for="contact[email]">{{ 'products.notify_form.description' | t }}:</label>
+
+          {% if settings.notify_me_richtext %}
+            {{ settings.notify_me_richtext }}
+          {% endif %}
+
+          {% if customer %}
+            <input type="hidden" name="contact[email]" class="notify_email" id="contact[email]" value="{{ customer.email }}" />
+          {% else %}
+            <input required type="email" class="notify_email" name="contact[email]" id="contact[email]" placeholder="{{ 'products.notify_form.email' | t }}" value="{{ contact.fields.email }}" />
+          {% endif %}
+
+          <input type="hidden" name="challenge" value="false" />
+          <input type="hidden" name="contact[body]" class="notify_form_message" data-body="{{ 'products.notify_form.message_content' | t: product: product.title, url: canonical_url }}" value="{{ 'products.notify_form.message_content' | t: product: product.title, url: canonical_url }}" />
+          <input class="action_button" type="submit" value="{{ 'products.notify_form.send' | t }}" style="margin-bottom:0px" />
+        </p>
+      {% endif %}
+    {% endform %}
+  </div>
+{% endif %}

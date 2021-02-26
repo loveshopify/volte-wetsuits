@@ -1,0 +1,34 @@
+{% assign variantCount = product.variants | size %}
+
+{% for option in product.options %}
+{% assign is_size = false %}
+{% assign downcased_option = option | downcase %}
+
+{% if downcased_option contains 'size' %}
+{% assign option_index = forloop.index0 %}
+{% assign option_count = 0 %}
+{% assign values = '' %}
+
+{% for variant in product.variants %}
+{% assign value = variant.options[option_index] %}
+{% unless values contains value %}
+
+{% if option_count > 0 %}
+{% assign values = values | join: '|' | append: '|' %}
+{% endif %}
+{% assign values = values | append: value %}
+{% assign values = values | split: '|' | sort %}
+{% assign option_count = values | size %}
+
+{% if variant.available %}
+  <span>{{ value }}</span>
+{% endif %}
+
+{% endunless %}
+{% endfor %}
+
+
+{% endif %}
+
+
+{% endfor %}

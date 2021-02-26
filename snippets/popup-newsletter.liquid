@@ -1,0 +1,26 @@
+<span style="display: none;" class="remodal newsletter-popup {% if settings.newsletter_bg != nil %}newsletter-image--true {% else %} newsletter-image--false{% endif %} align-{{settings.newsletter_popup_image_align}} {% if settings.display_first_name and settings.display_last_name %}newsletter-both-names--true {% else %}newsletter-both-names--false {% endif %} object-fit--{{ settings.image_crop }}" data-remodal-id="newsletter" data-remodal-options="hashTracking: false{%- if settings.newsletter_popup_close == false -%}, closeOnOutsideClick: false, closeOnEscape: false{%- endif -%}">
+	<div class="newsletter-description">
+		{% if settings.newsletter_popup_close %}
+			<a data-remodal-action="close" class="remodal-close"></a>
+		{% endif %}
+		<h2 class="n_title">{{ settings.newsletter_popup_title }}</h2>
+		<div class="n_sub_title">{{ settings.newsletter_popup_text }}</div>
+
+		{% if settings.popup_button1 != blank or settings.popup_button2 != blank %}
+			<div class="newsletter-buttons">
+				{% if settings.popup_button1 != blank %}
+					<a {% if settings.popup_button1_link != blank %}href="{{ settings.popup_button1_link }}"{% else %}data-remodal-action="confirm"{% endif %} class="button highlight-{{ settings.popup_button1_highlight }}">
+						{{ settings.popup_button1 }}
+					</a>
+				{% endif %}
+				{% if settings.popup_button2 != blank %}
+					<a {% if settings.popup_button2_link != blank %}href="{{ settings.popup_button2_link }}"{% else %}data-remodal-action="confirm"{% endif %} class="button highlight-{{ settings.popup_button2_highlight }}">
+						{{ settings.popup_button2 }}
+					</a>
+				{% endif %}
+			</div>
+		{% endif %}
+
+		{% include 'newsletter-form' %}
+	</div>
+</span>

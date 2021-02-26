@@ -1,0 +1,25 @@
+<div class="vertical-menu">
+  {% for link in linklists[vertical-menu].links %}
+    {% if linklists[link.handle] == empty %}
+      <li><a href="{{ link.url }}" class="top_link {% if link.active %}active{% endif %}" data-dropdown-rel="{{ link.handle }}">{{ link.title }}</a></li>
+    {% else %}
+      <li class="sublink"><a data-no-instant href="{{ link.url }}" class="dropdown_link--vertical {% if link.active %}active{% endif %}" data-dropdown-rel="{{ link.handle }}" data-click-count="0">{{ link.title }} <span class="icon-down-arrow"></span></a>
+        <ul class="vertical-menu_submenu">
+          {% for link in linklists[link.handle].links %}
+            {% if linklists[link.handle] == empty %}
+              <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+            {% else %}
+            <li class="sublink"><a data-no-instant href="{{ link.url }}" data-click-count="0">{{ link.title }} <span class="right icon-down-arrow"></span></a>
+              <ul class="vertical-menu_sub-submenu">
+                {% for link in linklists[link.handle].links %}
+                  <li><a href="{{ link.url }}" >{{ link.title }}</a></li>
+                {% endfor %}
+              </ul>
+            </li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </li>
+    {% endif %}
+  {% endfor %}
+</div>

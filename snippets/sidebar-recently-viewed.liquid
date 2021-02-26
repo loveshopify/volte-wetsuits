@@ -1,0 +1,14 @@
+{% assign products_per_row = section.settings.rv_per %}
+{% assign products_limit = block.settings.sidebar_rv_per | minus: 1 %}
+
+<div class="recently-viewed__title">
+  <h4 class="toggle">{{ block.settings.sidebar_rv_title }}</h4>
+</div>
+
+<div class="clearfix rv-container">
+  <div itemtype="http://schema.org/ItemList" class="product-list clearfix recently-viewed-list">
+    {% for rvProducts in (0..products_limit) %}
+      <div class="rv-element rv-sidebar-element rv-box-{{ rvProducts }} thumbnail"></div>
+    {% endfor %}
+  </div>
+</div>

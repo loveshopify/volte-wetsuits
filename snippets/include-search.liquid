@@ -1,0 +1,29 @@
+{% if type == 'block' %}
+  {% assign search_title = block.settings.search_title %}
+  {% assign search_text = block.settings.search_text %}
+  {% assign search_section_text_align = block.settings.search_section_text_align %}
+  {% assign image = block.settings.image %}
+{% else %}
+  {% assign search_title = section.settings.search_title %}
+  {% assign search_text = section.settings.search_text %}
+  {% assign search_section_text_align = section.settings.search_section_text_align %}
+  {% assign image = section.settings.image %}
+{% endif %}
+
+<div class="search__section
+            {% if image != nil %}search-bgr-true{% endif %}
+            text-align--{{search_section_text_align}}
+          "
+      {% if image != nil %}style="background-image: url(https:{{ image | img_url: '1600x'}})"{% endif %}>
+  <div class="container">
+    <div class="section_form">
+      {% if search_title != blank %}
+        <h2 class="title">{{ search_title }}</h2>
+      {% endif %}
+      {% if search_text != blank %}
+        <div class="search-text">{{ search_text }}</div>
+      {% endif %}
+      {% include 'search-form' %}
+    </div>
+  </div>
+</div>

@@ -1,0 +1,56 @@
+{% if settings.show_shipping_calculator %}
+
+<div id="shipping-calculator" class="sixteen columns">
+
+  <h4>{{ 'cart.shipping_calculator.heading' | t }}</h4>
+
+  <div id="shipping-calculator-form-wrapper" class="clearfix">
+    <div class="four columns alpha" id="address_country_container">
+      <label for="address_country">{{ 'cart.shipping_calculator.country' | t }}</label>
+      <select id="address_country" name="address[country]" data-default="{% if shop.customer_accounts_enabled and customer and customer.default_address.country %}{{ customer.default_address.country }}{% elsif settings.shipping_calculator_default_country != '' %}{{ settings.shipping_calculator_default_country }}{% endif %}">{{ country_option_tags }}</select>
+    </div>
+    <div class="four columns" id="address_province_container" style="display:none;">
+      <label for="address_province">{{ 'cart.shipping_calculator.province' | t }}</label>
+      <select id="address_province" name="address[province]" data-default="{% if shop.customer_accounts_enabled and customer and customer.default_address.province != '' %}{{ customer.default_address.province }}{% endif %}"></select>
+    </div>
+    <div class="three columns" id="address_zip_container">
+      <label for="address_zip">{{ 'cart.shipping_calculator.zip_code' | t }}</label>
+      <input type="text" id="address_zip" name="address[zip]"{% if shop.customer_accounts_enabled and customer %} value="{{ customer.default_address.zip }}"{% endif %} />
+    </div>
+    <div class="four columns omega" id="get-rates-container">
+      <label for="get-rates-submit">&nbsp;</label>
+      <input type="button" class="get-rates action_button continue-button" value="{{ 'cart.shipping_calculator.submit_button_label' | t }}" />
+    </div>
+  </div>
+
+  <div id="wrapper-response"></div>
+
+</div>
+
+
+<script id="shipping-calculator-response-template" type="text/template" data-no-instant>
+  <p id="shipping-rates-feedback" <% if (success) { %> class="success" <% } else { %> class="error" <% } %>>
+  <% if (success) { %>
+    <% if (rates.length > 1) { %>
+      {{ 'cart.shipping_calculator.additional_rates_part_1' | t }} <%= rates.length %> {{ 'cart.shipping_calculator.additional_rates_part_2' | t }} <%= address %>, {{ 'cart.shipping_calculator.additional_rates_part_3' | t }} <%= rates[0].price %>.
+    <% } else if (rates.length == 1) { %>
+      {{ 'cart.shipping_calculator.available_rates' | t }} <%= address %>.
+    <% } else { %>
+      {{ 'cart.shipping_calculator.no_shipping_destination' | t }}
+    <% } %>
+  <% } else { %>
+    <%= errorFeedback %>
+  <% } %>
+  </p>
+  <ul id="shipping-rates">
+    <% for (var i=0; i<rates.length; i++) { %>
+    <li><%= rates[i].name %> {{ 'cart.shipping_calculator.at' | t }} <%= rates[i].price %></li>
+    <% } %>
+  </ul>
+</script>
+
+<!--[if lte IE 8]>
+<style> #shipping-calculator { display: none; } </style>
+<![endif]-->
+
+{% endif %}

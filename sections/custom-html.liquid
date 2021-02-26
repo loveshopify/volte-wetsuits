@@ -1,0 +1,44 @@
+{% comment %}
+** Custom HTML - homepage partial **
+- Draggable section
+{% endcomment %}
+
+{% include 'include-custom-html' %}
+
+<style>
+  
+  {% if section.settings.background_color != blank %}
+  
+  #shopify-section-{{ section.id }} {
+    background-color: {{ section.settings.background_color }};
+  }
+  
+  {% endif %}
+  
+</style>
+
+{% schema %}
+{
+  "name": "Custom HTML",
+  "class": "custom-html-section",
+  "settings": [
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color"
+    },
+	{
+      "type": "textarea",
+      "id": "custom_html",
+      "label": "Custom html"
+    }
+  ],
+  "presets": [{
+    "name": "Custom HTML",
+    "category": "Content",
+    "settings": {
+    }
+  }]
+}
+
+{% endschema %}

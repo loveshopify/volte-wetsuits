@@ -1,0 +1,34 @@
+{% assign cols = content | split: '<!-- split -->' %}
+{% if cols.size == 2 %}
+  <div class="eight columns alpha">
+    {{ cols[0] }}
+  </div>
+  <div class="eight columns omega">
+    {{ cols[1] }}
+  </div>
+{% elsif cols.size == 3 %}
+  <div class="one-third column alpha">
+    {{ cols[0] }}
+  </div>
+  <div class="one-third column">
+    {{ cols[1] }}
+  </div>
+  <div class="one-third column omega">
+    {{ cols[2] }}
+  </div>
+{% elsif cols.size == 4 %}
+  <div class="four columns alpha">
+    {{ cols[0] }}
+  </div>
+  <div class="four columns">
+    {{ cols[1] }}
+  </div>
+  <div class="four columns">
+    {{ cols[2] }}
+  </div>
+  <div class="four columns omega">
+    {{ cols[3] }}
+  </div>
+{% else %}
+  {{ content }}
+{% endif %}

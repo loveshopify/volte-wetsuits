@@ -1,0 +1,12 @@
+{% comment %}Get article total words{% endcomment %}
+{% assign totalWords = article.content | strip_html | split: ' ' %}
+{% comment %}Determine WPM into WPS{% endcomment %}
+{% assign wordsPerSecond = 270.0 | divided_by: 60.0 %}
+{% comment %}Determine WPS read time{% endcomment %}
+{% assign readTimeSeconds = totalWords.size | divided_by: wordsPerSecond %}
+{% comment %}Determine WPM read time{% endcomment %}
+{% assign readTimeMinutes = readTimeSeconds | divided_by: 60.0 %}
+{% comment %}Round up value{% endcomment %}
+{% assign totalReadTime = readTimeMinutes | ceil %}
+
+<span>{{ totalReadTime }} {{ 'blogs.article.read_time' | t }}</span>

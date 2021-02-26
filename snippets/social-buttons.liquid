@@ -1,0 +1,42 @@
+{% capture current_url %}{% if social-buttons == 'article' %}{{ shop.url }}{{ article.url }}{% else %}{{ canonical_url }}{% endif %}{% endcapture %}
+
+{% capture buttons %}
+<div class="social_buttons">
+  {% capture title %}{% if social-buttons == 'article' %}{{ article.title | truncate: 30 | url_escape }}{% else %}{{ product.title | truncate: 30 | url_escape }}{% endif %}{% endcapture %}
+  {% capture shop_name %}{{ shop.name | url_param_escape }}{% endcapture %}
+  {% capture twitter_name %}{{ settings.twitter_link | split: 'twitter.com/' | last }}{% endcapture %}
+
+  <div class="share-btn twitter"><!--Twitter-->
+    <a target="_blank" class="icon-twitter-share" title="{{ 'layout.social_sharing.twitter_title' | t }}" href="https://twitter.com/intent/tweet?text={{ title | replace: '&','%26' }}&url={{ current_url }}{%- if twitter_name != blank -%}&via={{ twitter_name }}{%- endif -%}"></a>
+  </div>
+
+  <div class="share-btn facebook"><!--Facebook-->
+    <a target="_blank" class="icon-facebook-share" title="{{ 'layout.social_sharing.facebook_title' | t }}" href="https://www.facebook.com/sharer/sharer.php?u={{ current_url }}"></a>
+  </div>
+
+   <div class="share-btn pinterest"><!--Pinterest-->
+    {% if social-buttons == 'article' %}
+    <a target="_blank" data-pin-do="skipLink" class="icon-pinterest-share" title="{{ 'layout.social_sharing.pinterest_title' | t }}" href="https://pinterest.com/pin/create/button/?url={{ current_url }}&description={{ article.content | strip_html | truncate: 240 }}&media={% if article.image %}{{ article.image | img_url: 'grande' }}{% else %}{% assign my_image_url=article.content | escape %}{% if my_image_url contains '&lt;img' %}{% assign my_image_url = my_image_url | split: 'src=&quot;' %}{% assign my_image_url = my_image_url[1] | split: '&quot;' %}{% assign my_image_url = my_image_url[0] | remove: '//cdn' %}{% assign my_image_url = my_image_url | remove: 'http:http://' %}{% assign my_image_url = my_image_url | remove: 'https:' %}{{ my_image_url | prepend: 'https://cdn'}}{% endif %}{% endif %}"></a>
+  {% else %}
+    <a target="_blank" data-pin-do="skipLink" class="icon-pinterest-share" title="{{ 'layout.social_sharing.pinterest_title' | t }}" href="https://pinterest.com/pin/create/button/?url={{ current_url }}&description={{ title | truncate: 240 }}&media=https:{{ product.featured_image.src | product_img_url: '600x' }}"></a>
+  {% endif %}
+   </div>
+
+   <div class="share-btn google"><!--Google+-->
+    <a target="_blank" class="icon-gplus-share" title="{{ 'layout.social_sharing.google_plus_title' | t }}" href="https://plus.google.com/share?url={{ current_url }}"></a>
+   </div>
+
+   <div class="share-btn mail"><!--Email-->
+     <a href="mailto:?subject={{ 'layout.social_sharing.email_subject' | t: title: title }}&amp;body={{ 'layout.social_sharing.email_message' | t: title: title, name: shop_name }}%0D%0A%0D%0A{{ current_url }}" target="_blank" class="icon-mail-share" title="{{ 'layout.social_sharing.email_title' | t }}"></a>
+   </div>
+</div>
+
+{% endcapture %}
+
+{% if social-buttons == 'article' and section.settings.display_social_buttons  %}
+  <div class="share_article">
+    {{ buttons }}
+  </div>
+{% elsif social-buttons == 'product' and section.settings.display_social_buttons %}
+  {{ buttons }}
+{% endif %}

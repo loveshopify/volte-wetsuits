@@ -1,0 +1,345 @@
+{% comment %}
+** Slideshow - homepage partial **
+- Draggable section
+- Uses blocks
+{% endcomment %}
+
+{% assign default = '1400x' %}
+{% assign size1 = '480x' %}
+{% assign size2 = '765x' %}
+{% assign size3 = '900x' %}
+{% assign size4 = '1000x' %}
+{% assign size5 = '1100x' %}
+{% assign size6 = '1300x' %}
+{% assign size7 = '1500x' %}
+{% assign size8 = '1700x' %}
+{% assign size9 = '1900x' %}
+{% assign size10 = '2000x' %}
+
+{% if section.settings.wide_display == false %}
+<div class="container">
+  <div class="sixteen columns">
+{% endif %}
+{% if section.blocks.size > 0 %}
+  <section  id="homepage_slider-{{section.id}}"
+        class="homepage-slideshow
+        js-homepage-slideshow
+        slideshow_animation--{{ section.settings.slideshow_animation }}
+        {% if section.settings.slideshow_text_animation != '' %}text-animation--true{% else %}text-animation--false{% endif %}
+        transparentBackground--{{settings.slideshow_button_style}}
+        full-width--{{ section.settings.wide_display }}"
+        data-slider-id="homepage_slider-{{section.id}}"
+        data-slideshow-speed="{{section.settings.slideshow_speed}}"
+        data-slideshow-text-animation="{{section.settings.slideshow_text_animation}}"
+        data-adaptive-height="{{section.settings.activate_adaptiveHeight}}"
+        >
+    {% for block in section.blocks %}
+        <div class="gallery-cell slide-{{ forloop.index }}" {{ block.shopify_attributes }} data-block-id="{{block.id}}">
+        {% if block.settings.image != nil %}
+          <img  src="{{ block.settings.image | img_url: '100x', format: 'pjpg' }}"
+                alt="{{ block.settings.image.alt | escape }}"
+                class="lazyload {{ settings.image_loading_style }}"
+                sizes="100vw"
+                data-src="{{ block.settings.image | img_url: default, format: 'pjpg' }}"
+                srcset="
+                {{ block.settings.image | img_url: default, format: 'pjpg' }} {{default | replace: 'x', 'w'}},
+                {{ block.settings.image | img_url: size1, format: 'pjpg' }} {{size1 | replace: 'x', 'w'}},
+                {{ block.settings.image | img_url: size2, format: 'pjpg' }} {{size2 | replace: 'x', 'w'}},
+                {{ block.settings.image | img_url: size3, format: 'pjpg' }} {{size3 | replace: 'x', 'w'}},
+                {{ block.settings.image | img_url: size4, format: 'pjpg' }} {{size4 | replace: 'x', 'w'}},
+                {{ block.settings.image | img_url: size5, format: 'pjpg' }} {{size5 | replace: 'x', 'w'}},
+                {{ block.settings.image | img_url: size6, format: 'pjpg' }} {{size6 | replace: 'x', 'w'}},
+                {{ block.settings.image | img_url: size7, format: 'pjpg' }} {{size7 | replace: 'x', 'w'}},
+                {{ block.settings.image | img_url: size8, format: 'pjpg' }} {{size8 | replace: 'x', 'w'}},
+                {{ block.settings.image | img_url: size9, format: 'pjpg' }} {{size9 | replace: 'x', 'w'}},
+                {{ block.settings.image | img_url: size10, format: 'pjpg' }} {{size10 | replace: 'x', 'w'}}"
+                 />
+        {% else %}
+          {% capture i %}{% cycle "1", "2" %}{% endcapture %}
+          {{ 'lifestyle-' | append: i | placeholder_svg_tag: 'placeholder-svg placeholder-svg--slideshow' }}
+        {% endif %}
+          {% unless block.settings.button1_link != blank and block.settings.button2_link != blank %}
+          
+          {% if block.settings.remove_image_link == false %}
+          
+            {% if block.settings.button1_link != blank %}
+              <a href="{{ block.settings.button1_link }}" class="banner-full-link 123">
+                {{ block.settings.title }}
+              </a>
+            {% elsif block.settings.button2_link != blank %}
+              <a href="{{ block.settings.button2_link }}" class="banner-full-link 456">
+                {{ block.settings.title }}
+              </a>
+            {% endif %}
+          
+          {% endif %}
+          
+          {% endunless %}
+          {% unless block.settings.pretext == blank and block.settings.title == blank and block.settings.subtitle == blank and block.settings.button1 == blank and block.settings.button2 == blank %}
+            <div class="caption position-{{block.settings.text_position}} js-caption">
+                <div class="caption-content
+                            caption-background-{{block.settings.caption_background}}
+                            caption-transparency-{{ block.settings.caption_background_transparency }}
+                            align-{{block.settings.text_align}}">
+                  {% if block.settings.pretext != blank %}
+                    <div class="pretext">
+                      {{ block.settings.pretext }}
+                    </div>
+                  {% endif %}
+                  {% if forloop.first == true and block.settings.title != blank %}
+                    <h1 class="headline" style="color: {{ block.settings.text_color }};">
+                      {{ block.settings.title }}
+                    </h1>
+                  {% elsif block.settings.title != blank %}
+                    <p class="headline" style="color: {{ block.settings.text_color }};">
+                      {{ block.settings.title }}
+                    </p>
+                  {% endif %}
+                  {% if block.settings.subtitle != blank %}
+                    <div class="subtitle" style="color: {{ block.settings.text_color }};">
+                      {{ block.settings.subtitle }}
+                    </div>
+                  {% endif %}
+                  {% if block.settings.button1 != blank %}
+                    <a {% if block.settings.button1_link != blank %}href="{{ block.settings.button1_link }}"{% endif %} class="action_button first_button highlight-{{block.settings.button1_highlight}}">
+                      {{ block.settings.button1 }}
+                    </a>
+                  {% endif %}
+                  {% if block.settings.button2 != blank %}
+                    <a {% if block.settings.button2_link != blank %}href="{{ block.settings.button2_link }}"{% endif %} class="action_button second_button highlight-{{block.settings.button2_highlight}}">
+                      {{ block.settings.button2 }}
+                    </a>
+                  {% endif %}
+                </div>
+              </div>
+          {% endunless %}
+        </div>
+    {% endfor %}
+  </section>
+{% endif %}
+    
+{% if section.settings.wide_display == false %}
+  </div>
+</div>
+{% endif %}
+
+{% schema %}
+
+{
+  "name": "Blog Slideshow",
+  "class": "slideshow-section under-menu blog_slideshow",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "wide_display",
+      "label": "Wide display",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "slideshow_text_animation",
+      "label": "Text animation",
+      "options": [
+        {
+          "value": "",
+          "label": "None"
+        },
+        {
+          "value": "fadeIn",
+          "label": "Fade In"
+        },
+        {
+          "value": "fadeInUp",
+          "label": "Fade Up"
+        },
+        {
+          "value": "fadeInDown",
+          "label": "Fade Down"
+        }
+      ],
+      "default": "fadeInDown"
+    },
+    {
+      "type": "select",
+      "id": "slideshow_animation",
+      "label": "Gallery transition",
+      "options": [
+        {
+          "value": "slide",
+          "label": "Slide"
+        },
+        {
+          "value": "fade",
+          "label": "Fade"
+        }
+      ],
+      "default": "slide"
+    },
+    {
+      "type": "range",
+      "id": "slideshow_speed",
+      "label": "Change slides every",
+      "min": 0,
+      "max": 12,
+      "step": 1,
+      "default": 6,
+      "unit": "sec"
+    },
+    {
+      "type": "checkbox",
+      "id": "activate_adaptiveHeight",
+      "label": "Enable adaptive height",
+      "info": "Slideshow will adjust based on height of individual slides"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "image",
+      "name": "Slide",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "info": "1600 x 1000px recommended"
+        },
+        {
+          "type": "richtext",
+          "id": "pretext",
+          "label": "Preheading"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Your headline"
+        },
+        {
+          "type": "richtext",
+          "id": "subtitle",
+          "label": "Subheading"
+        },
+        {
+          "type": "select",
+          "id": "text_position",
+          "label": "Text position",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
+          ],
+          "default": "center"
+        },
+        {
+          "type": "select",
+          "id": "text_align",
+          "label": "Text alignment",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "center",
+              "label": "Center"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
+          ],
+          "default": "center"
+        },
+        {
+          "type": "checkbox",
+          "id": "caption_background",
+          "label": "Display text background"
+        },
+        {
+          "type": "checkbox",
+          "id": "caption_background_transparency",
+          "label": "Enable text background transparency"
+        },
+        {
+          "type": "text",
+          "id": "button1",
+          "label": "First button label"
+        },
+        {
+          "type": "url",
+          "id": "button1_link",
+          "label": "First slide link"
+        },
+        {
+          "type": "checkbox",
+          "id": "button1_highlight",
+          "label": "Highlight first button"
+        },
+        {
+          "type": "checkbox",
+          "id": "remove_image_link",
+          "label": "Remove image link"
+        },
+        {
+          "type": "text",
+          "id": "button2",
+          "label": "Second button label"
+        },
+        {
+          "type": "url",
+          "id": "button2_link",
+          "label": "Second slide link"
+        },
+        {
+          "type": "checkbox",
+          "id": "button2_highlight",
+          "label": "Highlight second button"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "default": "#ffffff",
+          "label": "Text Color"
+        }
+      ]
+    }
+  ],
+  "presets": [{
+    "name": "Blog Slideshow",
+    "category": "Image",
+    "settings": {
+    },
+    "blocks": [
+      {
+        "type": "image",
+        "settings": {
+          "image": "",
+          "title": "Turbo Shopify Theme",
+          "subtitle": "",
+          "text_align": "center"
+        }
+      },
+      {
+        "type": "image",
+          "settings": {
+          "image": "",
+          "title": "",
+          "subtitle": "",
+          "text_align": "center"
+        }
+      }
+    ]
+  }]
+}
+
+{% endschema %}
+<span class="start-Shopping-bannar">Discover our blog</span>

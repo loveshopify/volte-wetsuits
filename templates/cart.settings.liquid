@@ -1,0 +1,14 @@
+{% layout none %}
+
+{
+  "presets": {
+    "Custom": {
+
+    {% for s in settings %}
+      {{ s | json }}: {{ settings[s] | json }}{% unless forloop.last %},{% endunless %}
+    {% endfor %}
+ 
+    }
+  },
+  "current": "Custom"
+}

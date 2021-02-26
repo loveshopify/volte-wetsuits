@@ -1,0 +1,328 @@
+{% comment %}
+** Team page - custom view **
+- Page template
+- Uses blocks
+{% endcomment %}
+
+{% assign default = '1400x' %}
+{% assign size1 = '480x' %}
+{% assign size2 = '765x' %}
+{% assign size3 = '900x' %}
+{% assign size4 = '1000x' %}
+{% assign size5 = '1100x' %}
+{% assign size6 = '1300x' %}
+{% assign size7 = '1500x' %}
+{% assign size8 = '1700x' %}
+{% assign size9 = '1900x' %}
+{% assign size10 = '2000x' %}
+
+{% if page.title %}
+<div class="sixteen columns page clearfix">
+  <h1>
+    {{ page.title }}
+  </h1>
+  <div class="feature_divider"></div>
+</div>
+{% endif %}
+
+{% if section.settings.image != blank or section.settings.text != blank or section.settings.title != blank %}
+  <div class="sixteen columns">
+    <div class="team-page__content--{{ section.settings.image_position }} {% if section.settings.image != blank and section.settings.text != blank %}teamPage__content--multiple{% endif %}">
+      {% if section.settings.image != blank %}
+        <div class="team-page__image">
+          <img  src="{{ section.settings.image | img_url: '100x', format: 'pjpg' }}"
+            alt="{{ section.settings.image.alt | escape }}"
+            class="lazyload {{ settings.image_loading_style }}"
+            sizes="100vw"
+            data-src="{{ section.settings.image | img_url: default, format: 'pjpg' }}"
+            srcset="
+            {{ section.settings.image | img_url: default, format: 'pjpg' }} {{default | replace: 'x', 'w'}},
+            {{ section.settings.image | img_url: size1, format: 'pjpg' }} {{size1 | replace: 'x', 'w'}},
+            {{ section.settings.image | img_url: size2, format: 'pjpg' }} {{size2 | replace: 'x', 'w'}},
+            {{ section.settings.image | img_url: size3, format: 'pjpg' }} {{size3 | replace: 'x', 'w'}},
+            {{ section.settings.image | img_url: size4, format: 'pjpg' }} {{size4 | replace: 'x', 'w'}},
+            {{ section.settings.image | img_url: size5, format: 'pjpg' }} {{size5 | replace: 'x', 'w'}},
+            {{ section.settings.image | img_url: size6, format: 'pjpg' }} {{size6 | replace: 'x', 'w'}},
+            {{ section.settings.image | img_url: size7, format: 'pjpg' }} {{size7 | replace: 'x', 'w'}},
+            {{ section.settings.image | img_url: size8, format: 'pjpg' }} {{size8 | replace: 'x', 'w'}},
+            {{ section.settings.image | img_url: size9, format: 'pjpg' }} {{size9 | replace: 'x', 'w'}},
+            {{ section.settings.image | img_url: size10, format: 'pjpg' }} {{size10 | replace: 'x', 'w'}}"
+
+          />
+        </div>
+      {% endif %}
+      {% if section.settings.text != blank or section.settings.title != blank %}
+        <div class="team-page__text text-align--{{ section.settings.text_position }}">
+          <span class="team-page__container">
+            {% if section.settings.title %}
+              <h2>{{ section.settings.title }}</h2>
+            {% endif %}
+            {% if section.settings.text %}
+              {{ section.settings.text }}
+            {% endif %}
+          </span>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endif %}
+
+<div class="section">
+  <div class="sixteen columns">
+    {% if section.settings.image != blank or section.settings.text != blank or section.settings.title != blank %}
+      <hr class="feature_divider">
+    {% endif %}
+
+    <div class="row team-members">
+    {% for block in section.blocks %}
+        {% capture name %}{{ block.settings.title }}{% endcapture %}
+        {% capture twitter_handle %}{{ block.settings.twitter }}{% endcapture %}
+        {% capture title %}{{ block.settings.job_title }}{% endcapture %}
+        {% capture description %}{{ block.settings.description }}{% endcapture %}
+
+        {% if section.settings.employee_per_row == 2 %}
+          {% assign perRow = 'eight columns' %}
+          {% capture alphaOmegaCycle %}
+            {% cycle 'alpha', 'omega' %}
+          {% endcapture %}
+        {% elsif section.settings.employee_per_row == 3 %}
+          {% assign perRow = 'one-third column' %}
+          {% capture alphaOmegaCycle %}
+            {% cycle 'alpha', '', 'omega' %}
+          {% endcapture %}
+        {% else %}
+          {% assign perRow = 'four columns' %}
+          {% capture alphaOmegaCycle %}
+            {% cycle 'alpha', '', '', 'omega' %}
+          {% endcapture %}
+        {% endif %}
+
+        <div class="{{ perRow }} center {{ alphaOmegaCycle }} team-member__profile">
+          <figure class="team-member__wrap">
+            {% if block.settings.image %}
+              <img  src="{{ block.settings.image | img_url: '100x' }}"
+                    class="lazyload {{ settings.image_loading_style }}"
+                    alt="{% if block.settings.image.alt != blank %}{{ block.settings.image.alt }}{% else %}{{ name | escape }}{% endif %}"
+                    style="max-width: {{- block.settings.image.width -}}px;"
+                    data-sizes="auto"
+                    data-src="{{ block.settings.image | img_url: '2048x' }}"
+                    data-srcset=" {{ block.settings.image | img_url: '200x' }} 200w,
+                                  {{ block.settings.image | img_url: '400x' }} 400w,
+                                  {{ block.settings.image | img_url: '600x' }} 600w,
+                                  {{ block.settings.image | img_url: '800x' }} 800w,
+                                  {{ block.settings.image | img_url: '1000x' }} 1000w,
+                                  {{ block.settings.image | img_url: '1400x' }} 1400w,
+                                  {{ block.settings.image | img_url: '2048x' }} 2048w"
+                    />
+            {% else %}
+              {% capture i %}{% cycle "1", "2", "3", "4", "5", "6" %}{% endcapture %}
+              {{ 'collection-' | append: i | placeholder_svg_tag: 'placeholder-svg' }}
+            {% endif %}
+
+            <figcaption class="team-member__overlay">
+              <div class="team-member__details">
+                {% if title != blank %}
+                  <h4 class="team-member__title">{{title}}</h4>
+                {% endif %}
+                {% if description != blank %}
+                  <p>{{description}}</p>
+                {% endif %}
+                {% if twitter_handle != blank %}
+                  <a href="https://twitter.com/{{twitter_handle}}"><span class="icon-twitter"></span>@{{twitter_handle}}</a>
+                {% endif %}
+              </div>
+            </figcaption>
+          </figure>
+          <h3 class="team-member__name no_border">{{ name }}</h3>
+        </div>
+        {% if section.settings.employee_per_row == 2 %}
+          {% cycle '', '<br class="clear product_clear" />' %}
+        {% elsif section.settings.employee_per_row == 3 %}
+          {% cycle '', '', '<br class="clear product_clear" />' %}
+        {% else %}
+          {% cycle '', '', '', '<br class="clear product_clear" />' %}
+        {% endif %}
+    {% endfor %}
+  </div>
+</div>
+</div>
+
+<style>
+  .team-member__details h4,
+  .team-member__details p {
+    color: {{ section.settings.member_color }};
+  }
+
+  .team-member__details h4::after { background-color: {{ section.settings.member_accent_color }}; }
+
+  {% assign hover_bg = section.settings.member_overlay_color | color_extract: 'alpha' %}
+  .team-member__overlay {
+    {% if hover_bg != 0 %}
+      background-color: {{ section.settings.member_overlay_color | color_modify: 'alpha', 0.8 }}
+    {% endif %}
+  }
+</style>
+
+{% schema %}
+
+{
+  "name": "Page | team",
+  "class": "team-section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Image position",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Meet the team"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Say a little something about your team here, tell the story of how you got together, describe what roles people play, and help your customers get to know you better! All your staff members can be listed below, with their respective photos, job titles, descriptions or mini-bios, and Twitter handles.</p>"
+    },
+    {
+      "type": "select",
+      "id": "text_position",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Employees"
+    },
+    {
+      "type": "range",
+      "id": "employee_per_row",
+      "label": "Images per row",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "color",
+      "id": "member_color",
+      "label": "Text",
+      "default": "#fff"
+    },
+    {
+      "type": "color",
+      "id": "member_accent_color",
+      "label": "Accent",
+      "default": "#d54d4d"
+    },
+    {
+      "type": "color",
+      "id": "member_overlay_color",
+      "label": "Overlay",
+      "default": "#000"
+    }
+  ],
+  "blocks": [
+    {
+      "name": "Employee",
+      "type": "employee",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "info": "800 x 800px recommended"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Name",
+          "default": "Jamie Ipsum"
+        },
+        {
+          "type": "text",
+          "id": "job_title",
+          "label": "Job title",
+          "default": "Fancy job title"
+        },
+        {
+          "type": "richtext",
+          "id": "description",
+          "label": "Description",
+          "default": "<p>Powered by cats and coffee.</p>"
+        },
+        {
+          "type": "text",
+          "id": "twitter",
+          "label": "Twitter handle",
+          "default": "Shopify"
+        }
+      ]
+    }
+  ],
+  "default": {
+    "blocks": [
+      {
+        "type": "employee",
+        "settings": {
+          "title": "Jamie Ipsum",
+          "job_title": "Fancy Job Title",
+          "description": "<p>Powered by cats and coffee.</p>",
+          "twitter": "Shopify"
+        }
+      },
+      {
+        "type": "employee",
+        "settings": {
+          "title": "Jamie Ipsum",
+          "job_title": "Fancy Job Title",
+          "description": "<p>Powered by cats and coffee.</p>",
+          "twitter": "Shopify"
+        }
+      },
+      {
+        "type": "employee",
+        "settings": {
+          "title": "Jamie Ipsum",
+          "job_title": "Fancy Job Title",
+          "description": "<p>Powered by cats and coffee.</p>",
+          "twitter": "Shopify"
+        }
+      }
+    ]
+  }
+}
+
+{% endschema %}

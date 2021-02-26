@@ -1,0 +1,373 @@
+{% comment %}
+** Main blog page - default view **
+- Template section
+- Uses blocks
+{% endcomment %}
+
+{% if section.settings.image != nil %}
+  <header class="banner center page_banner dark-overlay-{{ section.settings.image_darken }}">
+    <img  src="{{ section.settings.image | img_url: '100x' }}"
+          alt="{% if section.settings.image.alt != blank %}{{ section.settings.image.alt }}{% else %}{{ blog.title | escape }}{% endif %}"
+          class="lazyload {{ settings.image_loading_style }}"
+          data-src="{{ section.settings.image | img_url: '1400x' }}"
+          sizes="100vw"
+          srcset="{{ section.settings.image | img_url: '480x' }} 480w,
+                  {{ section.settings.image | img_url: '765x' }} 765w,
+                  {{ section.settings.image | img_url: '1400x' }} 1400w,
+                  {{ section.settings.image | img_url: '2048x' }} 2048w"
+           />
+      {% if current_tags %}
+        <div class="caption captionOverlay--true">
+          <h1 class="headline">{{ current_tags }}</h1>
+        </div>
+      {% else %}
+        <div class="caption captionOverlay--true"> 
+          <h1 class="headline">{{ blog.title }}</h1>
+          <p class="subtitle">{{ section.settings.subtitle }}</p>
+        </div>
+      {% endif %}
+  </header>
+{% endif %}
+<div class="blog_header">
+  <span class="blog_header_span">Discover our blog</span>
+  
+  <div class="container main content">
+ 
+  
+  <form class="blog_search" action="/search">
+      <input type="hidden" name="type" value="article" />
+      <span class="icon-search search-submit"></span>
+      <input type="text" name="q" class="search_box" placeholder="{{ 'general.search.title' | t }}..." autocapitalize="off" autocomplete="off" autocorrect="off" value="{{ search.terms }}" />
+   </form>
+  </div>
+</div>
+<div class="discover-blog-box">
+  
+  
+<div class="container main content">
+
+{% paginate blog.articles by section.settings.blog_posts_per_page %}
+
+
+  {% comment %}Check to see if sidebar should be enabled{% endcomment %}
+  {% if section.blocks.size > 0 %}
+    {% assign sidebar = true %}
+  {% else %}
+    {% assign sidebar = false %}
+  {% endif %}
+
+  <div class="{% if sidebar %}twelve medium-down--one-whole {% else %}sixteen{% endif %} columns equal-columns--outside-trim equal-columns--clear coll_tab_section active_tab" id="coll_tab_{{ forloop.index }}">
+    {% for article in blog.articles %}
+    
+
+    
+      {% if section.settings.blog_posts_per_row == 1 %}
+        {% if article.image %}
+          <div class="nine columns alpha article_image large-down--one-half">
+            <a href="{{ article.url }}" title="{{ article.title | escape }}">
+              <img  src="{{ article.image | img_url: '100x' }}"
+                    class="lazyload {{ settings.image_loading_style }}"
+                    alt="{% if article.image.alt != blank %}{{ article.image.alt }}{% else %}{{ article.title | escape }}{% endif %}"
+                    style="max-width: {{- article.image.width -}}px"
+                    data-sizes="auto"
+                    data-src="{{ article.image | img_url: '700x' }}"
+                    data-srcset="   {{ article.image | img_url: '300x' }} 300w,
+                                    {{ article.image | img_url: '400x' }} 400w,
+                                    {{ article.image | img_url: '500x' }} 500w,
+                                    {{ article.image | img_url: '600x' }} 600w,
+                                    {{ article.image | img_url: '700x' }} 700w"
+                    />
+            </a>
+          </div>
+          <div class="{% if sidebar %}five{% else %}seven{% endif %} columns omega article medium-down--one-half">
+        {% else %}
+          <div class="{% if sidebar %}eight{% else %}sixteen{% endif %} columns alpha omega article">
+        {% endif %}
+      {% else %}
+      <div class="{% if section.settings.blog_posts_per_row == 2 %}eight columns {% elsif section.settings.blog_posts_per_row == 3 %}one-third column {% else %}four columns{% endif %} article medium-down--one-half small-down--one-whole">
+
+        {% if article.image %}
+          <a href="{{ article.url }}" title="{{ article.title | escape }}">
+            <img  src="{{ article.image | img_url: '100x' }}"
+
+                  class="lazyload {{ settings.image_loading_style }}"
+                  alt="{% if article.image.alt != blank %}{{ article.image.alt }}{% else %}{{ article.title | escape }}{% endif %}"
+                  style="max-width: {{- article.image.width -}}px"
+                  data-sizes="auto"
+                  data-src="{{ article.image | img_url: '700x' }}"
+                  data-srcset="   {{ article.image | img_url: '300x' }} 300w,
+                                  {{ article.image | img_url: '400x' }} 400w,
+                                  {{ article.image | img_url: '500x' }} 500w,
+                                  {{ article.image | img_url: '600x' }} 600w,
+                                  {{ article.image | img_url: '700x' }} 700w"
+                  />
+          </a>
+        {% endif %}
+		
+		<div class="caption position-center js-caption">
+      		<div class="discover-centar-content">
+        <h2><a href="{{ article.url }}">{{ article.title }}</a></h2>
+
+        <p class="blog_meta hide">
+          {% if section.settings.blog_author %}
+            <span>{{ 'blogs.article.by_author' | t: author: article.author }}</span>
+          {% endif %}
+
+          {% if section.settings.blog_date %}
+            <span>{{ article.published_at | date: format: "month_day_year" }}</span>
+          {% endif %}
+
+          {% if section.settings.read_time %}
+            {% include 'include-read-time' %}
+          {% endif %}
+
+          {% if section.settings.blog_comment_count %}
+            {% if settings.disqus_enabled %}
+              <span>
+                <a  href="{{ article.url }}#disqus_thread" data-disqus-identifier="{{ article.id }}" class="disqus-comment-count">{{ 'blogs.counts.comments_with_count' | t: count: 0 }}</a>
+              </span>
+            {% elsif article.comments_enabled? and article.comments_count > 0 %}
+              <span>
+                <a  href="{{ article.url }}#comments">{{ 'blogs.counts.comments_with_count' | t: count: article.comments_count }}</a>
+              </span>
+            {% endif %}
+          {% endif %}
+        </p>
+        {% if section.settings.blog_tags %}
+          <div class="blog_meta tags hide">
+            {% for tag in article.tags %}
+              <span><a  href="{{ shop.url }}/blogs/{{ blog.handle }}/tagged/{{ tag | handleize }}" title="{{ blog.title }} {{ 'blogs.general.tagged' | t }} {{ tag | escape }}">{{ tag }}</a></span>
+            {% endfor %}
+          </div>
+        {% endif %}
+        
+        {% if article.excerpt != blank %}
+          <div class="excerpt"> {{ article.excerpt | truncate: 165 }}</div>
+        {% endif %}
+        {% if section.settings.read_more_link %}
+          <a href="{{ article.url }}" title="{{ article.title | escape }}" class="action_button continue-button">{{ 'blogs.general.continue_reading_html' | t }}</a>
+        {% endif %}
+        	</div>
+          </div>
+      </div>
+     {% endif %}
+            
+      {% if section.settings.blog_posts_per_row == 2 %}
+        {% cycle "article_row": '', '<br class="clear" />' %}
+      {% elsif section.settings.blog_posts_per_row == 3 %}
+        {% cycle "article_row": '', '', '<br class="clear" />' %}
+      {% elsif section.settings.blog_posts_per_row == 4 %}
+        {% cycle "article_row": '', '', '', '<br class="clear" />' %}
+      {% else %}
+        <br class="clear" />
+      {% endif %}
+      
+  
+            
+    {% endfor %} 
+ 
+  
+
+  {% include "blog-sidebar", blog_handle: blog.handle %}
+
+  <br class="clear" />
+  <div class="sixteen columns">
+    {% include 'pagination' %}
+  </div>
+{% endpaginate %}
+
+  </div>
+	
+  
+  {% schema %}
+
+{
+  "name": "Blog",
+  "class": "blog-section",
+  "settings": [
+      {
+        "type": "image_picker",
+        "id": "image",
+        "label": "Banner image",
+        "info": "1800 x 800px recommended"
+      },
+      {
+        "type": "checkbox",
+        "id": "image_darken",
+        "label": "Darken banner image",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "subtitle",
+        "label": "Subheading",
+        "default": "Subheading"
+      },
+      {
+        "type": "range",
+        "id": "blog_posts_per_row",
+        "label": "Blog posts per row",
+        "min": 1,
+        "max": 4,
+        "step": 1,
+        "default": 3
+      },
+      {
+        "type": "range",
+        "id": "blog_posts_per_page",
+        "label": "Blog posts per page",
+        "min": 1,
+        "max": 50,
+        "step": 1,
+        "default": 12
+      },
+      {
+       "type": "checkbox",
+       "id": "blog_tags",
+       "label": "Show blog post tags"
+      },
+      {
+       "type": "checkbox",
+       "id": "blog_author",
+       "label": "Show author"
+      },
+      {
+        "type": "checkbox",
+        "id": "read_time",
+        "label": "Show estimated read time",
+        "default": true
+      },
+      {
+       "type": "checkbox",
+       "id": "blog_date",
+       "label": "Show date",
+       "default": true
+      },
+      {
+       "type": "checkbox",
+       "id": "blog_comment_count",
+       "label": "Show comment count",
+       "default": true
+      },
+      {
+       "type": "checkbox",
+       "id": "read_more_link",
+       "label": "Show continue reading link for blog post excerpts",
+       "default": true
+      },
+      {
+       "type": "header",
+       "content": "Sidebar"
+      },
+      {
+        "type": "paragraph",
+        "content": "Create a sidebar by adding content blocks."
+      },
+      {
+        "type": "checkbox",
+        "id": "toggle",
+        "label": "Toggle sidebar content",
+        "default": false
+      }
+  ],
+  "blocks": [
+    {
+      "type": "post_tags",
+      "name": "Blog post tags",
+      "limit": 1
+    },
+    {
+      "type": "menu",
+      "name": "Menu",
+      "settings": [
+        {
+          "type": "link_list",
+          "id": "custom_menu_linklist",
+          "label": "Menu"
+        }
+      ]
+    },
+    {
+      "type": "newsletter",
+      "name": "Newsletter sign up form",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "newsletter_title",
+          "label": "Heading",
+          "default": "Subscribe"
+        },
+        {
+          "type": "richtext",
+          "id": "newsletter_text",
+          "label": "Subheading",
+          "default": "<p>Sign up to get the latest on sales, new releases and more …</p>"
+        }
+      ]
+    },
+    {
+      "type": "page",
+      "name": "Page",
+      "settings": [
+        {
+          "type": "page",
+          "id": "content_page",
+          "label": "Page"
+        }
+      ]
+    },
+    {
+      "type": "recent_posts",
+      "name": "Recent blog posts",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "blog_post_count",
+          "label": "Display blog posts",
+          "options": [
+            {
+              "value": "2",
+              "label": "2"
+            },
+            {
+              "value": "5",
+              "label": "5"
+            },
+            {
+              "value": "10",
+              "label": "10"
+            }
+          ],
+          "default": "10"
+        }
+      ]
+    },
+    {
+      "type": "search",
+      "name": "Search form",
+      "limit": 1
+    },
+    {
+      "type": "text",
+      "name": "Text",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Heading",
+          "default": "Heading"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>Text area can be used for details about blog authors or general information.</p>"
+        }
+      ]
+    }
+  ]
+}
+
+{% endschema %}

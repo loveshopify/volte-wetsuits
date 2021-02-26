@@ -1,0 +1,71 @@
+{% comment %}
+** Newsletter - homepage partial **
+- Draggable section
+{% endcomment %}
+
+{% include 'include-newsletter' %}
+
+{% schema %}
+
+{
+  "name": "Newsletter",
+  "class": "newsletter-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "newsletter_title",
+      "label": "Heading",
+      "default": "Subscribe"
+    },
+    {
+      "type": "richtext",
+      "id": "newsletter_text",
+      "label": "Subheading",
+      "default": "<p>Sign up to get the latest on sales, new releases and more …</p>"
+    },
+    {
+      "type": "checkbox",
+      "id": "display_first_name",
+      "label": "Show first name"
+    },
+    {
+      "type": "checkbox",
+      "id": "display_last_name",
+      "label": "Show last name"
+    },
+    {
+      "type": "select",
+      "id": "newsletter_section_text_align",
+      "label": "Text alignment",
+      "options": [
+         {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+     ],
+      "default": "center"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Upload banner background image",
+      "info":"1600 x 300px recommended"
+    }
+  ],
+  "presets": [{
+    "name": "Newsletter",
+    "category": "Promotional",
+    "settings": {
+    }
+  }]
+}
+
+{% endschema %}
